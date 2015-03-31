@@ -14,4 +14,5 @@ void Miv::key_press(KeyStatus ks, char key) {
 }
 
 void Miv::repaint(int frame_id) {
+    (void)frame_id;
 }

@@ -7,10 +7,10 @@ class Miv;
 
 class UI {
 public:
-	virtual UI() = 0;
+    UI();
 	virtual ~UI() = 0;
 
-	virtual void void run() = 0;
+    virtual void run() = 0;
 
 	virtual void paint(int frame_id, const Screen &screen) = 0;
 

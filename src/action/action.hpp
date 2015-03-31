@@ -2,7 +2,7 @@
 
 class Action {
 public:
-	Action();
+    Action();
 	virtual ~Action();
 	virtual void perform();
 };

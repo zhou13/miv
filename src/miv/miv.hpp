@@ -19,6 +19,7 @@ public:
 	//void mouse_up();
 	//void menu_click(int memu_id);
 	void repaint(int frame_id);
+
 private:
 	vector<unique_ptr<Frame>> m_frames;
 	vector<unique_ptr<XArray>> m_xarrays;
