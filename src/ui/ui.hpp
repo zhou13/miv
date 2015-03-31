@@ -7,8 +7,8 @@ class Miv;
 
 class UI {
 public:
-    UI();
-	virtual ~UI() = 0;
+    UI() {}
+    virtual ~UI() {}
 
     virtual void run() = 0;
 

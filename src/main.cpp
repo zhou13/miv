@@ -4,7 +4,7 @@
 
 int main() {
 	std::cout << "Hello World!" << std::endl;
-	//unique_ptr<UI> ui = new NcursesUI();
-	//ui->run();
+    UI *ui = new NcursesUI();
+    ui->run();
 	return 0;
 }

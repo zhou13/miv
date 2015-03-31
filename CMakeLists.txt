@@ -6,7 +6,7 @@ find_package(Boost COMPONENTS program_options system filesystem REQUIRED)
 
 set(GCC_PARAMETERS "-Wall -Wextra -std=c++11")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_DEBUG} ${GCC_PARAMETERS}")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${GCC_PARAMETERS} -DDEBUG") # -fsanitize=address
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${GCC_PARAMETERS} -DDEBUG -fsanitize=address")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${GCC_PARAMETERS} -O2")
 
 include_directories(src)
@@ -20,6 +20,7 @@ set(
     src/miv/miv.cpp
     src/action/action.cpp
     src/file/file.cpp
+    src/ui/ui.cpp
     src/ui/ncurses.cpp
     src/frame/frame.cpp
     src/main.cpp
