@@ -5,9 +5,7 @@
 #include "file/file.hpp"
 #include "miv/controller.hpp"
 
-struct KeyStatus {
-	bool control, alt, shift;
-};
+class UI;
 
 class Miv {
 public:

@@ -1,6 +1,10 @@
 #pragma once
 #include "common.hpp"
-#include "action.hpp"
+#include "action/action.hpp"
+
+struct KeyStatus {
+	bool control, alt, shift;
+};
 
 class Controller {
 public:

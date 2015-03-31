@@ -1,6 +1,6 @@
 #pragma once
 #include <ncurses.h>
-#include "../frontend/ui.hpp"
+#include "ui/ui.hpp"
 
 class NcursesUI: public UI {
 };
