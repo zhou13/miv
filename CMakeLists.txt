@@ -4,9 +4,9 @@ project(miv)
 # find_package(CUDA REQUIRED)
 find_package(Boost COMPONENTS program_options system filesystem REQUIRED)
 
-set(GCC_PARAMETERS "-Wall -Wextra -Werror -std=c++11")
+set(GCC_PARAMETERS "-Wall -Wextra -std=c++11")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_DEBUG} ${GCC_PARAMETERS}")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${GCC_PARAMETERS} -DDEBUG -fsanitize=address")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${GCC_PARAMETERS} -DDEBUG") # -fsanitize=address
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${GCC_PARAMETERS} -O2")
 
 include_directories(src)
