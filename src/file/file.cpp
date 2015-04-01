@@ -12,7 +12,7 @@ File::~File()
 
 void File::read()
 {
-    std::string s("Hello World!\n Yes?");
+    std::string s("Hello World!\nHello!\nWorld!\nU\nP\nTTTT\nT_T\nThis is the last line\nThis is really the \n last \n LINE\n!");
     m_array->assign(wstring(s.begin(), s.end()));
 }
 

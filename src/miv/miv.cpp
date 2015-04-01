@@ -12,12 +12,12 @@ Miv::Miv(UI *ui) :
     m_ui(ui),
     m_controller(make_unique<Controller>(this))
 {
-    printf("Miv.constructor\n");
+    //printf("Miv.constructor\n");
 }
 
 Miv::~Miv()
 {
-    printf("Miv.destructor\n");
+    //printf("Miv.destructor\n");
 }
 
 void Miv::init()
@@ -36,7 +36,7 @@ void Miv::init()
 
 void Miv::key_press(KeyCombo key)
 {
-    printf("Miv.key_press key=%c\n", key.key);
+    //printf("Miv.key_press key=%c\n", key.key);
     m_controller->key_press(key);
     for (;;) {
 		auto action = m_controller->pop_next_action();
@@ -61,7 +61,7 @@ void Miv::redraw(Frame *frame) {
 
 void Miv::draw(Frame *frame)
 {
-    std::printf("Miv::draw\n");
+    //std::printf("Miv::draw\n");
     if (frame == nullptr) {
         for (auto &fr: m_frames) {
             draw(fr.get());

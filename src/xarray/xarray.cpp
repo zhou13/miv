@@ -57,7 +57,10 @@ wstring XArray::getline(size_t x) const
 
 wstring XArray::getline(size_t x, size_t y1, size_t y2) const
 {
-    return getline(x).substr(y1, y2-y1);
+    wstring s = getline(x);
+    if (y1 >= s.size() || y2 <= y1)
+        return wstring();
+    return s.substr(y1, y2 - y1);
 }
 
 Point XArray::cur_to_point(size_t c) const

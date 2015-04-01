@@ -26,8 +26,8 @@ void Frame::move_cursor(Vector offset)
     Vector ncursor = m_cursor + offset;
     Point absolute_cursor = m_page.origin + ncursor;
 
-    printf("Frame.move_cursor.begin: (%d, %d)\n",
-           (int)ncursor.x, (int)ncursor.y);
+    //printf("Frame.move_cursor.begin: (%d, %d)\n",
+    //       (int)ncursor.x, (int)ncursor.y);
 
     ptrdiff_t lines = m_array->lines();
     if (absolute_cursor.x >= lines) {
@@ -41,8 +41,8 @@ void Frame::move_cursor(Vector offset)
         absolute_cursor.x += delta;
     }
 
-    printf("Frame.move_cursor.middle: (%d, %d)\n",
-           (int)ncursor.x, (int)ncursor.y);
+    //printf("Frame.move_cursor.middle: (%d, %d)\n",
+   //        (int)ncursor.x, (int)ncursor.y);
 
     ptrdiff_t line_width = m_array->getline(absolute_cursor.x).length();
     if (absolute_cursor.y >= line_width) {
@@ -55,8 +55,8 @@ void Frame::move_cursor(Vector offset)
     }
 
     m_cursor = ncursor;
-    printf("Frame.move_cursor.end: (%d, %d)\n",
-           (int)ncursor.x, (int)ncursor.y);
+    //printf("Frame.move_cursor.end: (%d, %d)\n",
+    //       (int)ncursor.x, (int)ncursor.y);
     adjust_page();
 }
 
@@ -73,8 +73,17 @@ void Frame::adjust_page()
         m_cursor.x = 0;
     }
     if ((size_t)m_cursor.x >= m_page.height()) {
-        m_page += Vector(m_cursor.x - m_page.height(), 0);
-        m_cursor.x = m_page.height()-1;
+        m_page += Vector(m_cursor.x - m_page.height() + 1, 0);
+        m_cursor.x = m_page.height() - 1;
+        //printf("!!!!!!!!!!!!\n!!!!!!!!!!! x1=%d x2=%d\n",(int)m_page.x1(),(int)m_page.x2());
+    }
+    if (m_cursor.y < 0) {
+        m_page += Vector(0, m_cursor.y);
+        m_cursor.y = 0;
+    }
+    if ((size_t)m_cursor.y >= m_page.width()) {
+        m_page += Vector(0, m_cursor.y - m_page.width() + 1);
+        m_cursor.y = m_page.width() - 1;
     }
     // TODO horizontal scroll
 }
