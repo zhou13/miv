@@ -3,7 +3,6 @@
 Miv::Miv()
 {
     printf("Miv.constructor\n");
-    m_controller = make_unique<Controller>();
 
     unique_ptr<File> file = make_unique<File>("_"); // TODO: using default now
     wstring file_content = file->read();
@@ -13,6 +12,10 @@ Miv::Miv()
     m_arrays.push_back(std::move(array));
     m_frames.push_back(std::move(frame));
     m_files.push_back(std::move(file));
+
+
+    m_controller = make_unique<Controller>(this);
+    m_controller->init();
 }
 
 Miv::~Miv()
