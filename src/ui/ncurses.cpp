@@ -16,6 +16,8 @@ NcursesUI::~NcursesUI()
 void NcursesUI::run()
 {
     printf("NcursesUI.start_run\n");
+    m_miv->init();
+    m_miv->redraw();
     while (1) {
         char buf[99];
         char ch;
@@ -32,8 +34,8 @@ void NcursesUI::run()
 void NcursesUI::paint(int frame_id, const Screen &screen)
 {
     (void)frame_id; // TODO: add more frames
-    int x = (int)screen.cursor.dx;
-    int y = (int)screen.cursor.dy;
+    int x = (int)screen.cursor.x;
+    int y = (int)screen.cursor.y;
     printf("NcursesUI.paint; cursor=(%d, %d)\n", x, y);
     for (auto &x: screen.cells) {
         for (auto &y: x) {

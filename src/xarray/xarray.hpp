@@ -28,9 +28,10 @@ public:
 //    // return size if none
 //    size_t find_newline(size_t pos, size_t k);
     wstring getline(size_t x) const;
+    wstring getline(size_t x, size_t y1, size_t y2) const;
 
 private:
-    std::wstring m_str;
+    wstring m_str;
 
     Point cur_to_point(size_t c) const;
     size_t point_to_cur(Point p) const;

@@ -25,7 +25,8 @@ void Miv::init()
     unique_ptr<XArray> array = make_unique<XArray>();
     unique_ptr<File> file = make_unique<File>(this, array.get(), "");
     file->read();
-    unique_ptr<Frame> frame = make_unique<Frame>(array.get());
+    unique_ptr<Frame> frame = make_unique<Frame>(this, array.get());
+    m_currframe = frame.get();
     m_arrays.push_back(std::move(array));
     m_frames.push_back(std::move(frame));
     m_files.push_back(std::move(file));
@@ -52,15 +53,18 @@ void Miv::redraw(Frame *frame) {
         }
         return;
     }
-    auto size = m_ui->ask_size(frame_index(frame), vector<ScreenCell>());
+    auto size = m_ui->ask_size(
+                frame_index(frame),
+                m_currframe->gutter());
     m_currframe->set_size(size);
 }
 
 void Miv::draw(Frame *frame)
 {
+    std::printf("Miv::draw\n");
     if (frame == nullptr) {
         for (auto &fr: m_frames) {
-            redraw(fr.get());
+            draw(fr.get());
         }
         return;
     }

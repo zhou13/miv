@@ -42,9 +42,10 @@ void XArray::erase(size_t pos, size_t len)
     m_str.erase(pos, len);
 }
 
-std::wstring XArray::getline(size_t x) const
+wstring XArray::getline(size_t x) const
 {
-    assert(x < lines());
+    if (x >= lines())
+        return wstring();
     wstring ans;
     for (size_t i = point_to_cur(Point(x, 0));
          i < m_str.size() && m_str[i] != '\n';
@@ -52,6 +53,11 @@ std::wstring XArray::getline(size_t x) const
         ans += m_str[i];
     }
     return ans;
+}
+
+wstring XArray::getline(size_t x, size_t y1, size_t y2) const
+{
+    return getline(x).substr(y1, y2-y1);
 }
 
 Point XArray::cur_to_point(size_t c) const

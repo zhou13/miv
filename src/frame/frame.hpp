@@ -4,23 +4,31 @@
 #include "frame/mode.hpp"
 #include "miv/screen.hpp"
 
+class Miv;
 class XArray;
 class Frame {
 public:
-    Frame(XArray *array);
+    Frame(Miv *miv, XArray *array);
     ~Frame();
 
+    Vector cursor() { return m_cursor; }
+    void set_cursor(Point point);
     void move_cursor(Vector offset);
+    void move_page(ptrdiff_t offset);
+    void adjust_page();
+
     Mode mode() const { return m_mode; }
     void set_mode(Mode mode);
-    Size size() { return m_size; }
+    Size size() { return m_page.size; }
     void set_size(Size size);
+    vector<ScreenCell> gutter();
     Screen draw();
 
 private:
+    Miv *m_miv;
     XArray* m_array;
     Mode m_mode;
-    Size m_size;
-    Point m_cursor;
-    Rect m_position;
+
+    Vector m_cursor;
+    Rect m_page;
 };

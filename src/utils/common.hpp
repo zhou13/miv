@@ -1,4 +1,5 @@
 #pragma once
+
 #include <string>
 #include <vector>
 #include <cstddef>
@@ -29,17 +30,35 @@ struct Size {
     Size(size_t h, size_t w) : height(h), width(w) {}
 };
 
-struct Point {
-    size_t x, y;
-    Point() : x(0), y(0) {}
-    Point(size_t x, size_t y) : x(x), y(y) {}
+struct Vector {
+    ptrdiff_t x, y;
+    Vector() : x(0), y(0) {}
+    Vector(ptrdiff_t x, ptrdiff_t y) : x(x), y(y) {}
+    Vector operator+(const Vector &rhs) {
+        return Vector(x + rhs.x, y + rhs.y);
+    }
+    Vector operator-(const Vector &rhs) {
+        return Vector(x - rhs.x, y - rhs.y);
+    }
 };
 
-struct Vector {
-    ptrdiff_t dx, dy;
-    Vector() : dx(0), dy(0) {}
-    Vector(ptrdiff_t dx, ptrdiff_t dy) : dx(dx), dy(dy) {}
+struct Point {
+    ptrdiff_t x, y;
+    Point() : x(0), y(0) {}
+    Point(ptrdiff_t x, ptrdiff_t y) : x(x), y(y) {}
+    Point operator+(const Vector &rhs) {
+        return Point(x + rhs.x, y + rhs.y);
+    }
+    Point operator-(const Vector &rhs) {
+        return Point(x - rhs.x, y - rhs.y);
+    }
 };
+
+
+inline Vector operator-(const Vector &lhs, const Vector &rhs)
+{
+    return Vector(lhs.x - rhs.x, lhs.y - rhs.y);
+}
 
 struct Rect {
 	Point origin;
@@ -52,4 +71,11 @@ struct Rect {
     size_t x2() { return origin.x + size.height; }
     size_t y1() { return origin.y; }
     size_t y2() { return origin.y + size.width; }
+    size_t height() { return size.height; }
+    size_t width() { return size.width; }
+    Rect &operator+=(const Vector &rhs) {
+        origin = origin + rhs; // todo
+        return *this;
+    }
 };
+

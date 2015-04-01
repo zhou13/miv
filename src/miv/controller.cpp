@@ -41,17 +41,20 @@ void Controller::init()
 
 void Controller::key_press(KeyCombo key)
 {
+    std::printf("Controller.key_press\n");
     m_keys.push_back(key);
     Mode mode = m_miv->frame()->mode();
     auto id = make_pair(mode, m_keys);
 
     if (m_keymap.find(id) != m_keymap.end()) {
+        std::printf("Controller.key_press: found shortcut\n");
         for (auto &action: m_keymap[id]) {
             m_actions.push(action);
         }
         m_keys.clear();
     }
     if (m_keys.size() > 4) {
+        std::printf("Controller.key_press: reset shortcut\n");
         m_keys.clear();
     }
 }
