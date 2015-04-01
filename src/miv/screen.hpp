@@ -1,5 +1,10 @@
 #pragma once
-#include "common.hpp"
+
+enum class CursorShape {
+    BLOCK,
+    IBLEAM,
+    UNDERLINE,
+};
 
 struct ScreenCell {
 	wchar_t ch;
@@ -9,4 +14,5 @@ struct ScreenCell {
 struct Screen {
     vector<vector<ScreenCell>> cells;
     Vector cursor;
+    CursorShape cursor_shape;
 };

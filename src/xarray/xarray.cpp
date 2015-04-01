@@ -1,38 +1,99 @@
 #include "xarray/xarray.hpp"
+#include <cassert>
 
+
+XArray::XArray()
+{
+}
+
+XArray::XArray(const std::wstring &init_value) :
+    m_str(init_value)
+{
+}
 
 XArray::~XArray()
 {
-
 }
-
-
-XArray::XArray(const std::wstring &init_value)
-{
-    (void)init_value;
-}
-
 
 size_t XArray::size() const
 {
     return m_str.size();
 }
 
+size_t XArray::lines() const
+{
+    return count(m_str.begin(), m_str.end(), '\n')  + 1;
+}
+
+void XArray::assign(const std::wstring &str)
+{
+    m_str = str;
+}
+
 
 void XArray::insert(size_t pos, const std::wstring &value)
 {
-    (void)pos, (void)value;
+    m_str.insert(pos, value);
 }
 
 
 void XArray::erase(size_t pos, size_t len)
 {
-    (void)pos, (void)len;
+    m_str.erase(pos, len);
 }
 
-
-size_t XArray::find_newline(size_t pos, size_t k)
+std::wstring XArray::getline(size_t x) const
 {
-    (void)pos, (void)k;
+    assert(x < lines());
+    wstring ans;
+    for (size_t i = point_to_cur(Point(x, 0));
+         i < m_str.size() && m_str[i] != '\n';
+         ++i) {
+        ans += m_str[i];
+    }
+    return ans;
+}
+
+Point XArray::cur_to_point(size_t c) const
+{
+    assert(c < size());
+
+    Point p(0, 0);
+    p.x = std::count(m_str.begin(), m_str.begin() + c, '\n');
+    size_t i = c;
+    while (i > 0 && m_str[i - 1] != '\n')
+        -- i;
+    p.y = c - i;
+    return p;
+}
+
+size_t XArray::point_to_cur(Point p) const
+{
+    Point t(0, 0);
+    for (size_t i = 0; i < m_str.size(); ++i) {
+        if (t.x == p.x && t.y == p.y)
+            return i;
+        if (m_str[i] == '\n') {
+            ++t.x, t.y = 0;
+        } else {
+            ++t.y;
+        }
+    }
+    if (size() == 0)
+        return 0;
+    return cur_to_point(size() - 1).x + 1;
+
+    if (size() == 0)
+        return 0;
+    return cur_to_point(size() - 1).x + 1;
+    assert(false);
     return 0;
 }
+
+
+
+//size_t XArray::find_newline(size_t pos, size_t k)
+//{
+//    while (1)
+//    return 0;
+//}

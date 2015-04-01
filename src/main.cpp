@@ -1,5 +1,5 @@
 #include <iostream>
-#include "common.hpp"
+#include "utils/common.hpp"
 #include "ui/ncurses.hpp"
 
 int main() {

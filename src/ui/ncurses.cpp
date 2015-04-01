@@ -1,6 +1,5 @@
+#include "miv/miv.hpp"
 #include "ui/ncurses.hpp"
-#include <cstdio>
-
 
 NcursesUI::NcursesUI()
 {
@@ -49,5 +48,7 @@ void NcursesUI::paint(int frame_id, const Screen &screen)
 Size NcursesUI::ask_size(int frame_id,
                          const vector<ScreenCell> &gutter_sample)
 {
+    (void)frame_id;
+    (void)gutter_sample;
     return Size(8, 6);
 }

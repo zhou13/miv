@@ -1,13 +1,19 @@
 #pragma once
 
-#include "common.hpp"
+#include "utils/common.hpp"
 
+class Miv;
+class XArray;
 
 class File {
 public:
-    File(string filename);
+    File(Miv *m_miv, XArray *array, string filename);
     ~File();
-    wstring read() const;
+    void read();
+    void write();
+
 private:
+    Miv *m_miv;
+    XArray *m_array;
     string m_filename;
 };

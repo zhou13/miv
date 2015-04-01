@@ -1,33 +1,40 @@
 #include "miv/miv.hpp"
+#include "miv/input.hpp"
+#include "ui/ui.hpp"
+#include "frame/frame.hpp"
+#include "file/file.hpp"
+#include "miv/controller.hpp"
+#include "action/common.hpp"
+#include "ui/ui.hpp"
+#include "xarray/xarray.hpp"
 
-Miv::Miv()
+Miv::Miv(UI *ui) :
+    m_ui(ui),
+    m_controller(make_unique<Controller>(this))
 {
     printf("Miv.constructor\n");
-
-    unique_ptr<File> file = make_unique<File>("_"); // TODO: using default now
-    wstring file_content = file->read();
-
-    unique_ptr<XArray> array = make_unique<XArray>(file_content);
-    unique_ptr<Frame> frame = make_unique<Frame>(array.get());
-    m_arrays.push_back(std::move(array));
-    m_frames.push_back(std::move(frame));
-    m_files.push_back(std::move(file));
-
-
-    m_controller = make_unique<Controller>(this);
-    m_controller->init();
 }
 
 Miv::~Miv()
 {
     printf("Miv.destructor\n");
-
 }
 
-void Miv::init() {
+void Miv::init()
+{
+    unique_ptr<XArray> array = make_unique<XArray>();
+    unique_ptr<File> file = make_unique<File>(this, array.get(), "");
+    file->read();
+    unique_ptr<Frame> frame = make_unique<Frame>(array.get());
+    m_arrays.push_back(std::move(array));
+    m_frames.push_back(std::move(frame));
+    m_files.push_back(std::move(file));
+
+    m_controller->init();
 }
 
-void Miv::key_press(KeyCombo key) {
+void Miv::key_press(KeyCombo key)
+{
     printf("Miv.key_press key=%c\n", key.key);
     m_controller->key_press(key);
     for (;;) {
@@ -38,14 +45,26 @@ void Miv::key_press(KeyCombo key) {
 	}
 }
 
-void Miv::repaint(int frame_id) {
-    (void)frame_id;
-    // TODO
+void Miv::redraw(Frame *frame) {
+    if (frame == nullptr) {
+        for (auto &fr: m_frames) {
+            redraw(fr.get());
+        }
+        return;
+    }
+    auto size = m_ui->ask_size(frame_index(frame), vector<ScreenCell>());
+    m_currframe->set_size(size);
 }
 
-void Miv::flush()
+void Miv::draw(Frame *frame)
 {
-    // TODO
+    if (frame == nullptr) {
+        for (auto &fr: m_frames) {
+            redraw(fr.get());
+        }
+        return;
+    }
+    m_ui->paint(frame_index(frame), frame->draw());
 }
 
 Frame *Miv::frame(int id)
@@ -53,4 +72,14 @@ Frame *Miv::frame(int id)
     if (id == -1)
         return m_currframe;
     return m_frames[id].get();
+}
+
+int Miv::frame_index(const Frame *frame) const
+{
+    for (size_t i = 0; i < m_frames.size(); ++i) {
+        if (m_frames[i].get() == frame) {
+            return i;
+        }
+    }
+    return -1;
 }

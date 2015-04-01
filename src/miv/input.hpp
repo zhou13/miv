@@ -22,3 +22,4 @@ struct MouseCommbo {
     bool control, alt, shift;
     int status;
 };
+

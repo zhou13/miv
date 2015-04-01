@@ -15,18 +15,20 @@ link_directories(${Boost_LIBRARY_DIRS})
 
 set(
     miv_SRC
-    src/xarray/xarray.cpp
-    src/miv/controller.cpp
-    src/miv/miv.cpp
-    src/action/action.cpp
+    src/action/action.hpp
+    src/action/common.cpp
     src/file/file.cpp
-    src/ui/ui.cpp
-    src/ui/ncurses.cpp
     src/frame/frame.cpp
+    src/frame/mode.hpp
     src/main.cpp
-    src/common.hpp
-    src/miv/screen.hpp
+    src/miv/controller.cpp
     src/miv/input.hpp
+    src/miv/miv.cpp
+    src/miv/screen.hpp
+    src/ui/ncurses.cpp
+    src/ui/ui.cpp
+    src/utils/common.hpp
+    src/xarray/xarray.cpp
 )
 
 add_executable(

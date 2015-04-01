@@ -1,13 +1,9 @@
 #include "ui/ui.hpp"
+#include "miv/miv.hpp"
 
-
-UI::UI() : m_miv(new Miv())
+UI::UI()
 {
-//    m_miv = new Miv();
+    m_miv = make_unique<Miv>(this);
 }
 
-
-UI::~UI()
-{
-//    delete m_miv;
-}
+UI::~UI() {}

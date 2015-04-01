@@ -1,5 +1,4 @@
 #pragma once
-#include <ncurses.h>
 #include "ui/ui.hpp"
 #include "miv/screen.hpp"
 

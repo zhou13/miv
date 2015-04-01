@@ -1,29 +1,14 @@
 #pragma once
-#include "common.hpp"
 
-class Action {
-public:
-    Action() {}
-    virtual ~Action() {}
-    virtual void perform() {}
-};
+#include "utils/common.hpp"
 
 class Miv;
-class Frame;
-
-class FlushAction : Action {
-    Miv *miv;
+class Action {
 public:
-    FlushAction(Miv *miv) : miv(miv) {}
-    virtual ~FlushAction() {}
-    virtual void perform();
-};
+    Action(Miv *miv) : m_miv(miv) {}
+    virtual ~Action() {}
+    virtual void perform() {}
 
-class MoveAction : Action {
-    Frame *frame;
-    Vector vec;
-public:
-    MoveAction(Frame *frame, Vector vec) : frame(frame), vec(vec) {}
-    virtual ~MoveAction() {}
-    virtual void perform();
+protected:
+    Miv *m_miv;
 };
