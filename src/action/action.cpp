@@ -1,18 +1,14 @@
 #include "action/action.hpp"
+#include "miv/miv.hpp"
 
-Action::Action()
+void FlushAction::perform()
 {
-
+    miv->flush();
 }
 
 
-Action::~Action()
+
+void MoveAction::perform()
 {
-
-}
-
-
-void Action::perform()
-{
-
+    frame->move_cursor(vec);
 }

@@ -3,7 +3,7 @@
 
 Controller::Controller()
 {
-    vector<Action *> actions;
+    vector<Action> actions;
 
     actions.clear();
     actions.push_back(FlushAction());

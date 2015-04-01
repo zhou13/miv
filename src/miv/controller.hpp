@@ -1,15 +1,19 @@
 #pragma once
-#include "common.hpp"
-#include "action/action.hpp"
 
-struct KeyStatus {
-	bool control, alt, shift;
-};
+#include "common.hpp"
+#include "action/action.hpp"'
+#include "miv/input.hpp"
+
 
 class Controller {
 public:
-	void key_press(KeyStatus ks, char key);
-	shared_ptr<Action> pop_next_action();
+    Controller();
+    void key_press(KeyCombo key);
+    Action *pop_next_action();
+    void register_keys(const vector<KeyCombo> &keys,
+                       vector<Action> actions);
+
 private:
-	queue<shared_ptr<Action>> m_actions;
+    queue<Action *> m_actions;
+    map<vector<KeyCombo>, vector<Action>> m_keymap;
 };

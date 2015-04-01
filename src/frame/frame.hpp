@@ -4,13 +4,13 @@
 #include "xarray/xarray.hpp"
 
 class Frame {
-    XArray* m_list;
+    XArray* m_array;
     size_t m_cursor, m_scr_begin;
     size_t m_height, m_width;
 
 public:
-    Frame();
+    Frame(XArray *array);
     ~Frame();
 
-    void move_cursor(ptrdiff_t offset_x, ptrdiff_t offset_y);
+    void move_cursor(Vector offset);
 };

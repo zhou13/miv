@@ -1,31 +1,53 @@
 #include "ui/ncurses.hpp"
+#include <cstdio>
 
 
 NcursesUI::NcursesUI()
 {
-
+    printf("NcursesUI.constructor\n");
 }
 
 
 NcursesUI::~NcursesUI()
 {
-
+    printf("NcursesUI.destructor\n");
 }
 
 
 void NcursesUI::run()
 {
-
+    printf("NcursesUI.start_run\n");
+    while (1) {
+        char buf[99];
+        char ch;
+        scanf("%s", buf);
+        ch = buf[0];
+        if (ch == 'q')
+            break;
+        m_miv->key_press(KeyCombo(ch));
+    }
+    printf("NcursesUI.stop_run\n");
 }
 
 
 void NcursesUI::paint(int frame_id, const Screen &screen)
 {
-
+    (void)frame_id; // TODO: add more frames
+    int x = (int)screen.cursor.dx;
+    int y = (int)screen.cursor.dy;
+    printf("NcursesUI.paint; cursor=(%d, %d)\n", x, y);
+    for (auto &x: screen.cells) {
+        for (auto &y: x) {
+            printf("%c", (char)y.ch);
+        }
+        printf("\n");
+    }
+    printf("--------------------\n");
 }
 
 
-Size NcursesUI::ask_size(int frame_id, ScreenGrid grid_sample)
+Size NcursesUI::ask_size(int frame_id,
+                         const vector<ScreenCell> &gutter_sample)
 {
-
+    return Size(8, 6);
 }

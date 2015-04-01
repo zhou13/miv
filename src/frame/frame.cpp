@@ -1,6 +1,7 @@
 #include "frame/frame.hpp"
 
-Frame::Frame()
+Frame::Frame(XArray *array) :
+    m_array(array)
 {
 }
 
@@ -8,8 +9,7 @@ Frame::~Frame()
 {
 }
 
-void Frame::move_cursor(ptrdiff_t offset_x, ptrdiff_t offset_y)
+void Frame::move_cursor(Vector offset)
 {
-    (void)offset_x;
-    (void)offset_y;
+    (void)offset;
 }

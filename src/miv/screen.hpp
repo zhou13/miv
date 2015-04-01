@@ -1,16 +1,12 @@
 #pragma once
 #include "common.hpp"
 
-struct Gutter {
-	// TOOD ~~
-};
-
-struct ScreenGrid {
+struct ScreenCell {
 	wchar_t ch;
 	// TODO: {bg,fg}colors, fonts, ...
 };
 
 struct Screen {
-	Gutter gutter;
-	vector<vector<ScreenGrid>> grids;
+    vector<vector<ScreenCell>> cells;
+    Vector cursor;
 };
