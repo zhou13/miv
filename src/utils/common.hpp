@@ -44,7 +44,7 @@ struct Vector {
 struct Rect {
 	Point origin;
 	Size size;
-    Rect(): Point(), Size() {}
+    Rect() : origin(), size() {}
     Rect(size_t x1, size_t x2, size_t y1, size_t y2) :
         origin(x1, y1), size(x2-x1, y2-y1) {}
     Rect(Point o, Size s) : origin(o), size(s) {}
