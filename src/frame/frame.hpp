@@ -11,7 +11,7 @@ public:
     Frame(Miv *miv, XArray *array);
     ~Frame();
 
-    Vector cursor() { return m_cursor; }
+    Vector cursor() const { return m_cursor; }
     void set_cursor(Point point);
     void move_cursor(Vector offset);
     void move_page(ptrdiff_t offset);
@@ -19,9 +19,9 @@ public:
 
     Mode mode() const { return m_mode; }
     void set_mode(Mode mode);
-    Size size() { return m_page.size; }
+    Size size() const { return m_page.size; }
     void set_size(Size size);
-    vector<ScreenCell> gutter();
+    vector<ScreenCell> gutter_sample();
     Screen draw();
 
 private:

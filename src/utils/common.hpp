@@ -28,6 +28,9 @@ struct Size {
     size_t height, width;
     Size() : height(0), width(0) {}
     Size(size_t h, size_t w) : height(h), width(w) {}
+    bool operator ==(const Size &b) const {
+        return height == b.height && width == b.width;
+    }
 };
 
 struct Vector {

@@ -21,7 +21,7 @@ public:
     // void mouse_up();
     // void menu_click(int memu_id);
 
-    void draw(Frame *frame = nullptr);
+    //void draw(Frame *frame = nullptr);
     void redraw(Frame *frame = nullptr);
 
     Frame *frame(int id = -1);

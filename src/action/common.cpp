@@ -4,7 +4,7 @@
 
 void FlushAction::perform()
 {
-    m_miv->draw(m_miv->frame());
+    m_miv->redraw(m_miv->frame());
 }
 
 void CursorMoveLeftAction::perform()

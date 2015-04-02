@@ -53,12 +53,12 @@ void Miv::redraw(Frame *frame) {
         }
         return;
     }
-    auto size = m_ui->ask_size(
-                frame_index(frame),
-                m_currframe->gutter());
+    auto size = m_ui->ask_size(frame_index(frame),
+                               m_currframe->gutter_sample());
     m_currframe->set_size(size);
+    m_ui->paint(frame_index(frame), frame->draw());
 }
-
+/* TODO: delete those
 void Miv::draw(Frame *frame)
 {
     //std::printf("Miv::draw\n");
@@ -70,6 +70,7 @@ void Miv::draw(Frame *frame)
     }
     m_ui->paint(frame_index(frame), frame->draw());
 }
+*/
 
 Frame *Miv::frame(int id)
 {

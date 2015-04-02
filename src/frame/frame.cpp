@@ -90,37 +90,59 @@ void Frame::adjust_page()
 
 void Frame::set_mode(Mode mode)
 {
-    std::printf("Frame.set_mode: %s\n", MODE_TO_STRING(mode).c_str());
+    //std::printf("Frame.set_mode: %s\n", MODE_TO_STRING(mode).c_str());
     m_mode = mode;
-    m_miv->draw(this);
+    m_miv->redraw(this);
 }
 
 void Frame::set_size(Size size)
 {
-    std::printf("Frame.set_size: (%d %d)\n",
-                (int)size.height, (int)size.width);
+    //std::printf("Frame.set_size: (%d %d)\n",
+    //            (int)size.height, (int)size.width);
+    if (size == m_page.size)
+        return;
     m_page.size = size;
-    m_miv->draw(this);
+    m_miv->redraw(this);
 }
 
-vector<ScreenCell> Frame::gutter()
+vector<ScreenCell> Frame::gutter_sample()
 {
-    return vector<ScreenCell>();
+    size_t width = 0, tmp = 1;
+    while (m_array->lines() >= tmp) {
+        tmp *= 10, width += 1;
+    }
+    ScreenCell cell = ScreenCell::make_line_number(false, 0, width);
+    vector<ScreenCell> line(1, cell);
+    return line;
 }
 
 Screen Frame::draw()
 {
     Screen screen;
     screen.cursor = m_cursor;
-    screen.cells.resize(m_page.height());
-    for (auto &line: screen.cells)
-        line.resize(m_page.width());
+
+    // first: make gutter
+    vector<ScreenCell> gsample = gutter_sample();
 
     for (size_t x = m_page.x1(); x < m_page.x2(); ++x) {
+        vector<ScreenCell> line = gsample;
+        for (auto &cell: line) {
+            if (cell.type == ScreenCellType::LINENUMBER) {
+                if (x < m_array->lines()) {
+                    cell.enabled = true;
+                    cell.line_number = x + 1;
+                }
+            }
+        }
+        screen.cells.push_back(line);
+    }
+
+    // second: make text
+    for (size_t x = m_page.x1(); x < m_page.x2(); ++x) {
         auto line = m_array->getline(x, m_page.y1(), m_page.y2());
-        auto iter = screen.cells[x - m_page.x1()].begin();
+        vector<ScreenCell> &target = screen.cells[x - m_page.x1()];
         for (auto &ch: line) {
-            (*iter++).ch = ch;
+            target.push_back(ScreenCell::make_text(ch));
         }
     }
 
