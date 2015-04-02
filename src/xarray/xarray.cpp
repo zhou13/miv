@@ -4,11 +4,13 @@
 
 XArray::XArray()
 {
+    // TODO
 }
 
-XArray::XArray(const std::wstring &init_value) :
-    m_str(init_value)
+XArray::XArray(const std::wstring &init_value)
+    : XArray()
 {
+    assign(init_value);
 }
 
 XArray::~XArray()
@@ -47,7 +49,7 @@ wstring XArray::getline(size_t x) const
     if (x >= lines())
         return wstring();
     wstring ans;
-    for (size_t i = point_to_cur(Point(x, 0));
+    for (size_t i = point_to_cursor(Point(x, 0));
          i < m_str.size() && m_str[i] != '\n';
          ++i) {
         ans += m_str[i];
@@ -63,7 +65,7 @@ wstring XArray::getline(size_t x, size_t y1, size_t y2) const
     return s.substr(y1, y2 - y1);
 }
 
-Point XArray::cur_to_point(size_t c) const
+Point XArray::cursor_to_point(size_t c) const
 {
     assert(c < size());
 
@@ -76,7 +78,7 @@ Point XArray::cur_to_point(size_t c) const
     return p;
 }
 
-size_t XArray::point_to_cur(Point p) const
+size_t XArray::point_to_cursor(Point p) const
 {
     Point t(0, 0);
     for (size_t i = 0; i < m_str.size(); ++i) {
@@ -90,11 +92,11 @@ size_t XArray::point_to_cur(Point p) const
     }
     if (size() == 0)
         return 0;
-    return cur_to_point(size() - 1).x + 1;
+    return cursor_to_point(size() - 1).x + 1;
 
     if (size() == 0)
         return 0;
-    return cur_to_point(size() - 1).x + 1;
+    return cursor_to_point(size() - 1).x + 1;
     assert(false);
     return 0;
 }

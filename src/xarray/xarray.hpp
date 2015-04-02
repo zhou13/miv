@@ -6,6 +6,7 @@
 // maintain an array of char: S[0..n-1]
 class XArray {
 public:
+
     XArray();
     XArray(const std::wstring &init_value);
 	~XArray();
@@ -30,9 +31,28 @@ public:
     wstring getline(size_t x) const;
     wstring getline(size_t x, size_t y1, size_t y2) const;
 
+    Point cursor_to_point(size_t c) const;
+    size_t point_to_cursor(Point p) const;
+/*
+    class iterator {
+        XArray *xarray;
+        size_t i;
+    public:
+        iterator (XArray *xarray, size_t i)
+            :xarray(xarray), i(i) {}
+        iterator &operator++() {
+            ++i;
+            return *this;
+        }
+        iterator &operator--() {
+            --i;
+            return *this;
+        }
+        wchar_t operator*() {
+            return xarray->m_str[i];
+        }
+    };
+*/
 private:
     wstring m_str;
-
-    Point cur_to_point(size_t c) const;
-    size_t point_to_cur(Point p) const;
 };
