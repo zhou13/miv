@@ -2,7 +2,7 @@
 #include "ui/ncurses.hpp"
 #include <ncurses.h>
 
-static const int W = 10;
+static const int W = 20;
 static const int H = 10;
 
 #if 0
@@ -23,7 +23,8 @@ NcursesUI::NcursesUI()
     start_color();
     init_pair(1, COLOR_RED, COLOR_BLACK);
     init_pair(2, COLOR_WHITE, COLOR_BLACK);
-    init_pair(3, COLOR_WHITE, COLOR_BLUE);
+    init_pair(3, COLOR_WHITE, COLOR_YELLOW);
+    init_pair(4, COLOR_BLUE, COLOR_BLACK);
 }
 
 
@@ -98,14 +99,19 @@ void NcursesUI::paint(int frame_id, const Screen &screen)
 
         attron(COLOR_PAIR(1));
         mvprintw(cur_line, 0, "%s", str1.c_str());
-        attron(COLOR_PAIR(2));
+        if (cur_line == first_line + x) {
+            attron(COLOR_PAIR(3));
+        }
+        else {
+            attron(COLOR_PAIR(2));
+        }
         printw("%s", str2.c_str());
-        attron(COLOR_PAIR(3));
-        printw(" ");
+        attron(COLOR_PAIR(4));
+        printw("|");
         cur_line += 1;
     }
-    string str(W + 1, ' ');
-    attron(COLOR_PAIR(3));
+    string str(W + 1, '-');
+    attron(COLOR_PAIR(4));
     mvprintw(cur_line, 0, "%s", str.c_str());
     mvprintw(first_line + x, gutter_width + y, "");
 }

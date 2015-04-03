@@ -20,7 +20,7 @@
 extern std::shared_ptr<spdlog::logger> mlog;
 extern std::string log_funcname;
 
-#define DEFINE_SCOPE_LOGGER ScopeLogger scope_logger (BOOST_CURRENT_FUNCTION)
+#define DEFINE_SCOPE_LOGGER ScopeLogger scope_logger(BOOST_CURRENT_FUNCTION)
 class ScopeLogger {
 public:
     ScopeLogger(string funcname) {
