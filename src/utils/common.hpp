@@ -8,11 +8,13 @@
 #include <memory>
 #include <queue>
 #include <map>
+#include <set>
 #include <algorithm>
 
 #include <boost/program_options/variables_map.hpp>
 
 using std::map;
+using std::set;
 using std::pair;
 using std::vector;
 using std::queue;

@@ -10,6 +10,7 @@ class Action;
 class Controller {
 public:
     Controller(Miv *miv);
+    ~Controller();
     void init();
     void key_press(KeyCombo key);
     shared_ptr<Action> pop_next_action();
@@ -20,6 +21,9 @@ public:
 private:
     Miv *m_miv;
     queue<shared_ptr<Action>> m_actions;
+
+    // registered keys & current key sequence
     map<pair<Mode, vector<KeyCombo>>, vector<shared_ptr<Action>>> m_keymap;
+    set<pair<Mode, vector<KeyCombo>>> m_keymap_prefices;
     vector<KeyCombo> m_keys;
 };

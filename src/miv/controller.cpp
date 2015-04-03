@@ -5,10 +5,21 @@
 #include "miv/miv.hpp"
 #include "action/common.hpp"
 
+// input: sequence of KeyCombo
+// output: sequence of Action
+class Trie {
+
+};
+
 
 Controller::Controller(Miv *miv) :
     m_miv(miv)
 {
+}
+
+Controller::~Controller()
+{
+
 }
 
 void Controller::init()
@@ -51,11 +62,15 @@ void Controller::key_press(KeyCombo key)
         for (auto &action: m_keymap[id]) {
             m_actions.push(action);
         }
-        m_keys.clear();
+        m_keys.clear(); // TODO: add option (clear or not clear)
     }
-    if (m_keys.size() > 4) {
-        //std::printf("Controller.key_press: reset shortcut\n");
-        m_keys.clear();
+    // no this prefix exists
+    while (m_keys.size() > 0) {
+        auto prefix = make_pair(mode, m_keys);
+        if (m_keymap_prefices.find(prefix) != m_keymap_prefices.end())
+            break;
+        mlog->debug("erase key[{}]", (char)(m_keys.begin()->key));
+        m_keys.erase(m_keys.begin());
     }
 }
 
@@ -74,4 +89,9 @@ void Controller::register_keys(Mode mode,
                                shared_ptr<Action> action)
 {
     m_keymap[make_pair(mode, keys)].push_back(action);
+    vector<KeyCombo> prefix;
+    for (auto &k: keys) {
+        prefix.push_back(k);
+        m_keymap_prefices.insert(make_pair(mode, prefix));
+    }
 }
