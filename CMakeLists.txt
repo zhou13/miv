@@ -56,6 +56,8 @@ set(
     src/config/config.cpp
 )
 
+add_subdirectory(src/utils/libtermkey)
+
 add_executable(
     miv
     ${miv_SRC}
@@ -63,6 +65,7 @@ add_executable(
 
 target_link_libraries(
     miv
+    termkey
     ${CURSES_LIBRARIES}
     ${TERMINFO_LIBRARIES}
     ${Boost_LIBRARIES}
