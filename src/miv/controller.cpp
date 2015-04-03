@@ -24,29 +24,29 @@ Controller::~Controller()
 
 void Controller::init()
 {
-    register_keys(Mode::NORMAL, { KeyCombo('h') },
+    register_keys(Mode::NORMAL, { KeyCombo("h") },
                   make_shared<CursorMoveLeftAction>(m_miv));
-    register_keys(Mode::NORMAL, { KeyCombo('h') },
+    register_keys(Mode::NORMAL, { KeyCombo("h") },
                   make_shared<FlushAction>(m_miv));
 
-    register_keys(Mode::NORMAL, { KeyCombo('j') },
+    register_keys(Mode::NORMAL, { KeyCombo("j") },
                   make_shared<CursorMoveDownAction>(m_miv));
-    register_keys(Mode::NORMAL, { KeyCombo('j') },
+    register_keys(Mode::NORMAL, { KeyCombo("j") },
                   make_shared<FlushAction>(m_miv));
 
-    register_keys(Mode::NORMAL, { KeyCombo('k') },
+    register_keys(Mode::NORMAL, { KeyCombo("k") },
                   make_shared<CursorMoveUpAction>(m_miv));
-    register_keys(Mode::NORMAL, { KeyCombo('k') },
+    register_keys(Mode::NORMAL, { KeyCombo("k") },
                   make_shared<FlushAction>(m_miv));
 
-    register_keys(Mode::NORMAL, { KeyCombo('l') },
+    register_keys(Mode::NORMAL, { KeyCombo("l") },
                   make_shared<CursorMoveRightAction>(m_miv));
-    register_keys(Mode::NORMAL, { KeyCombo('l') },
+    register_keys(Mode::NORMAL, { KeyCombo("l") },
                   make_shared<FlushAction>(m_miv));
 
-    register_keys(Mode::NORMAL, { KeyCombo('i') },
+    register_keys(Mode::NORMAL, { KeyCombo("i") },
                   make_shared<EnterInsertModeAction>(m_miv));
-    register_keys(Mode::INSERT, { KeyCombo('~') },
+    register_keys(Mode::INSERT, { KeyCombo("~") },
                   make_shared<LeaveInsertModeAction>(m_miv));
 }
 

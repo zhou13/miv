@@ -10,11 +10,13 @@
 #include <map>
 #include <set>
 #include <algorithm>
+#include <unordered_map>
 
 #include <boost/program_options/variables_map.hpp>
 
 using std::map;
 using std::set;
+using std::hash;
 using std::pair;
 using std::vector;
 using std::queue;

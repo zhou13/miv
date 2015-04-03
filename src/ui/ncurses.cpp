@@ -45,7 +45,6 @@ void NcursesUI::run()
         char ch = getch();
         if (ch == 'q')
             break;
-        //mvprintw(50, 0, "");
         m_miv->key_press(KeyCombo(ch));
     }
 }

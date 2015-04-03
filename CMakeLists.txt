@@ -44,7 +44,7 @@ set(
     src/frame/mode.hpp
     src/main.cpp
     src/miv/controller.cpp
-    src/miv/input.hpp
+    src/miv/input.cpp
     src/miv/miv.cpp
     src/miv/screen.hpp
     src/ui/ncurses.cpp
