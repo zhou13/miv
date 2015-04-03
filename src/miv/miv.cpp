@@ -36,7 +36,7 @@ void Miv::init()
 
 void Miv::key_press(KeyCombo key)
 {
-    //printf("Miv.key_press key=%c\n", key.key);
+    DEFINE_SCOPE_LOGGER;
     m_controller->key_press(key);
     for (;;) {
 		auto action = m_controller->pop_next_action();

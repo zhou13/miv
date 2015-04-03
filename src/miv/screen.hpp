@@ -1,5 +1,7 @@
 #pragma once
 
+#include "utils/common.hpp"
+
 enum class CursorShape {
     BLOCK,
     IBLEAM,
@@ -7,8 +9,8 @@ enum class CursorShape {
 };
 
 enum class ScreenCellType {
-    TEXT,
-    LINENUMBER
+    TEXT = 0,
+    LINE_NUMBER,
 };
 
 struct ScreenCell {
@@ -23,6 +25,7 @@ struct ScreenCell {
             size_t width;
         };
     };
+    ScreenCell() = default;
     static ScreenCell make_text(wchar_t ch) {
         ScreenCell cell;
         cell.type = ScreenCellType::TEXT;
@@ -31,7 +34,7 @@ struct ScreenCell {
     }
     static ScreenCell make_line_number(bool e, ptrdiff_t num, size_t w) {
         ScreenCell cell;
-        cell.type = ScreenCellType::LINENUMBER;
+        cell.type = ScreenCellType::LINE_NUMBER;
         cell.enabled = e;
         cell.line_number = num;
         cell.width = w;

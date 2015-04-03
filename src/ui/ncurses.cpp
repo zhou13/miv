@@ -36,7 +36,8 @@ NcursesUI::~NcursesUI()
 
 void NcursesUI::run()
 {
-    printf("NcursesUI.start_run\n"); fflush(stdout);
+    DEFINE_SCOPE_LOGGER;
+
     m_miv->init();
     m_miv->redraw();
     while (1) {
@@ -46,7 +47,6 @@ void NcursesUI::run()
         //mvprintw(50, 0, "");
         m_miv->key_press(KeyCombo(ch));
     }
-    printf("NcursesUI.stop_run\n");
 }
 
 
@@ -71,7 +71,7 @@ void NcursesUI::paint(int frame_id, const Screen &screen)
                     ch = ' ';
                 str2 += ch;
             }
-            if (cell.type == ScreenCellType::LINENUMBER) {
+            if (cell.type == ScreenCellType::LINE_NUMBER) {
                 string tmp = "";
                 if (cell.enabled) {
                     ptrdiff_t x = cell.line_number;
@@ -119,7 +119,7 @@ Size NcursesUI::ask_size(int frame_id,
     for (auto &cell: gutter_sample) {
         if (cell.type == ScreenCellType::TEXT)
             width -= 1;
-        if (cell.type == ScreenCellType::LINENUMBER)
+        if (cell.type == ScreenCellType::LINE_NUMBER)
             width -= cell.width + 1;
     }
     //printf("NcursesUI.ask_size: return\n"); fflush(stdout);

@@ -127,7 +127,7 @@ Screen Frame::draw()
     for (size_t x = m_page.x1(); x < m_page.x2(); ++x) {
         vector<ScreenCell> line = gsample;
         for (auto &cell: line) {
-            if (cell.type == ScreenCellType::LINENUMBER) {
+            if (cell.type == ScreenCellType::LINE_NUMBER) {
                 if (x < m_array->lines()) {
                     cell.enabled = true;
                     cell.line_number = x + 1;

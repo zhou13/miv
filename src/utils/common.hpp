@@ -10,6 +10,8 @@
 #include <map>
 #include <algorithm>
 
+#include <boost/program_options/variables_map.hpp>
+
 using std::map;
 using std::pair;
 using std::vector;
@@ -82,3 +84,4 @@ struct Rect {
     }
 };
 
+#include "utils/logger.hpp"

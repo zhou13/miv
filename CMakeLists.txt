@@ -2,16 +2,30 @@ cmake_minimum_required(VERSION 3.0)
 project(miv)
 
 find_package(Boost COMPONENTS program_options system filesystem REQUIRED)
-find_package(Curses REQUIRED)
 
+find_package(Curses REQUIRED)
 INCLUDE(CheckLibraryExists)
 CHECK_LIBRARY_EXISTS(tinfo setupterm "" HAVE_TERMINFO)
 if (HAVE_TERMINFO)
     set(TERMINFO_LIBRARIES "tinfo")
 endif()
 
+option(WITH_NCURSES_UI "Compile the ncurses interface" ON)
+option(WITH_QT_UI "Compile the QT interface" OFF)
+option(WITH_PRINTF_UI "Compile the printf interface" OFF)
+
+if(WITH_NCURSES_UI)
+  add_definitions(-DWITH_NCURSES_UI)
+endif()
+if(WITH_QT_UI)
+  add_definitions(-DWITH_QT_UI)
+endif()
+if(WITH_PRINTF_UI)
+  add_definitions(-DWITH_PRINTF_UI)
+endif()
+
 set(GCC_PARAMETERS "-Wall -Wextra -std=c++1y")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_DEBUG} ${GCC_PARAMETERS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_PARAMETERS}")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${GCC_PARAMETERS} -g3 -DDEBUG -fsanitize=address")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${GCC_PARAMETERS} -O2")
 
@@ -19,6 +33,7 @@ include_directories(src)
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${CURSES_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
+link_directories(${CURSES_LIBRARY_DIRS})
 
 set(
     miv_SRC
@@ -35,6 +50,7 @@ set(
     src/ui/ncurses.cpp
     src/ui/ui.cpp
     src/utils/common.hpp
+    src/utils/logger.hpp
     src/xarray/xarray.cpp
 )
 
