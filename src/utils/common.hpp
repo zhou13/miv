@@ -4,6 +4,8 @@
 #include <vector>
 #include <cstddef>
 #include <cstdint>
+#include <climits>
+#include <numeric>
 #include <cstdio>
 #include <memory>
 #include <queue>
@@ -15,6 +17,8 @@
 #include <boost/program_options/variables_map.hpp>
 
 typedef ptrdiff_t num;
+const num NUM_MAX = std::numeric_limits<num>::max();
+const num NUM_MIN = std::numeric_limits<num>::min();
 
 using std::map;
 using std::set;

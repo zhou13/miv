@@ -12,18 +12,27 @@ public:
     XArray(const std::wstring &init_value);
 	~XArray();
 
+    void set_wrap(num width);
+
     num size() const;
     num lines() const;
 
     void assign(const std::wstring &value);
-    void insert(num pos, const std::wstring &value);
-    void erase(num pos, num len);
+    void insert(Point pos, const std::wstring &value);
+    void insertv(Point pos, const std::wstring &value);
+    void erase(Point pos, num len);
+    void erasev(Point pos, num len);
 
     wstring getline(num x) const;
+    wstring getlinev(num x) const;
     wstring getline(num x, num y1, num y2) const;
+    wstring getlinev(num x, num y1, num y2) const;
 
-    Point c2p(num c) const;
-    num p2c(Point p) const;
+    void setline(num x, const wstring &value);
+    void setlinev(num x, const wstring &value);
+
+    void virtual_to_normal();
+    void normal_to_virtual();
 
 private:
     num _size() const;
