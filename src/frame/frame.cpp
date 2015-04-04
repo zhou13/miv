@@ -103,11 +103,12 @@ void Frame::adjust_page()
 
 void Frame::set_size(Size size)
 {
+    if (size == m_page.size)
+        return;
+
     DEFINE_SCOPE_LOGGER;
     mlog->debug("size is set to ({}, {})", size.height, size.width);
 
-    if (size == m_page.size)
-        return;
     m_page.size = size;
     m_miv->redraw(this);
 }
