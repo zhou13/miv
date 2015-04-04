@@ -16,7 +16,8 @@ static const int H = 10;
 
 NcursesUI::NcursesUI()
 {
-    printf("NcursesUI.constructor\n");
+    DEFINE_SCOPE_LOGGER;
+
     initscr();
     noecho();
 
@@ -30,7 +31,8 @@ NcursesUI::NcursesUI()
 
 NcursesUI::~NcursesUI()
 {
-    printf("NcursesUI.destructor\n");
+    DEFINE_SCOPE_LOGGER;
+
     endwin();
 }
 
@@ -45,7 +47,7 @@ void NcursesUI::run()
         char ch = getch();
         if (ch == 'q')
             break;
-        m_miv->key_press(KeyCombo(ch));
+        m_miv->key_press(KeyCombo(string(1, ch)));
     }
 }
 
@@ -56,9 +58,6 @@ void NcursesUI::paint(int frame_id, const Screen &screen)
 
     const int x = (int)screen.cursor.x;
     const int y = (int)screen.cursor.y;
-
-    //printf("NcursesUI.paint: screen.cells.size=%d\n", (int)screen.cells.size());
-    //return;
 
     int cur_line = 0, first_line = cur_line;
     int gutter_width = 0;
@@ -127,6 +126,5 @@ Size NcursesUI::ask_size(int frame_id,
         if (cell.type == ScreenCellType::LINE_NUMBER)
             width -= cell.width + 1;
     }
-    //printf("NcursesUI.ask_size: return\n"); fflush(stdout);
     return Size(height, width);
 }

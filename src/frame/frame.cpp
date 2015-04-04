@@ -63,7 +63,7 @@ void Frame::move_cursor(Vector offset)
 void Frame::move_page(ptrdiff_t offset)
 {
     (void)offset;
-    // todo
+    mlog->critical("Not implemented!");
 }
 
 void Frame::adjust_page()

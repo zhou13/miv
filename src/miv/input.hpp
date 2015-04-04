@@ -424,13 +424,25 @@ enum class Key {
 };
 
 struct KeyCombo {
-    bool control, alt, super, shift;
+    bool control, super, alt, shift;
     Key key;
 
     KeyCombo() = default;
     KeyCombo(Key key);
     KeyCombo(string str);
     string to_string();
+
+    bool operator<(const KeyCombo& k) const {
+        if (control != k.control)
+            return control;
+        if (alt != k.alt)
+            return alt;
+        if (shift != k.shift)
+            return shift;
+        if (key != k.key)
+            return key < k.key;
+        return false;
+    }
 };
 
 namespace std {
@@ -446,9 +458,3 @@ struct hash<KeyCombo> {
     }
 };
 }
-
-struct MouseCommbo {
-    bool control, alt, shift;
-    int status;
-};
-

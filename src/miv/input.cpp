@@ -1,5 +1,3 @@
-#pragma once
-
 #include "miv/input.hpp"
 
 #include <boost/algorithm/string.hpp>
@@ -425,7 +423,7 @@ map<Key, string> key_to_str = {
     { Key::CANCEL                        , "Cancel"                       },
 };
 
-map<Key, string> str_to_key = {
+map<string, Key> str_to_key = {
     { "escape"                           , Key::ESCAPE                    },
     { "esc"                              , Key::ESCAPE                    },
     { "tab"                              , Key::TAB                       },
@@ -892,21 +890,26 @@ KeyCombo::KeyCombo(string str) :
             return;
         }
 
-        switch (*result) {
+        switch (result->second) {
         case Key::CONTROL:
             control = true;
-            break
+            break;
+
         case Key::SUPER_L:
             super = true;
             break;
+
         case Key::ALT:
             alt = true;
             break;
+
         case Key::SHIFT:
             shift = true;
             break;
+
         default:
-            key = *result;
+            key = result->second;
+            break;
         }
     }
 

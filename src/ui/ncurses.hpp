@@ -1,4 +1,5 @@
 #pragma once
+
 #include "ui/ui.hpp"
 #include "miv/screen.hpp"
 
@@ -11,4 +12,6 @@ public:
     virtual void paint(int frame_id, const Screen &screen);
     virtual Size ask_size(int frame_id,
                           const vector<ScreenCell> &gutter_sample);
+
+private:
 };
