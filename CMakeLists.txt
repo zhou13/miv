@@ -52,6 +52,7 @@ set(
     src/utils/common.hpp
     src/utils/logger.hpp
     src/xarray/xarray.cpp
+    src/config/config.cpp
 )
 
 add_executable(
