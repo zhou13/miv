@@ -215,26 +215,39 @@ Point XArray::normal_to_virtual(Point np) const
  * *************************************************************************
  */
 
+#define ___USE_STUPID
+
 num XArray::_size() const
 {
+#ifdef ___USE_STUPID
+    return m_stupid_xarray->size();
+#else
     num ans = m_split_list->size();
     if (ans != m_stupid_xarray->size()) {
         DIE("wrong result");
     }
     return ans;
+#endif
 }
 
 num XArray::_lines() const
 {
+#ifdef ___USE_STUPID
+    return m_stupid_xarray->lines();
+#else
     num ans = m_split_list->count_newline() + 1;
     if (ans != m_stupid_xarray->lines()) {
         DIE("wrong result");
     }
     return ans;
+#endif
 }
 
 num XArray::_line_size(num x) const
 {
+#ifdef ___USE_STUPID
+    return m_stupid_xarray->line_size(x);
+#else
     if (x < 0 || x >= _lines()) {
         DIE("out of bound");
     }
@@ -245,12 +258,17 @@ num XArray::_line_size(num x) const
         DIE("wrong result");
     }
     return ans;
+#endif
 }
 
 void XArray::_assign(const std::wstring &str)
 {
+#ifdef ___USE_STUPID
+    m_stupid_xarray->assign(str);
+#else
     m_split_list->assign(str);
     m_stupid_xarray->assign(str);
+#endif
 }
 
 
@@ -259,8 +277,12 @@ void XArray::_insert(num pos, const std::wstring &value)
     if (pos < 0 || pos > _size()) {
         DIE("out of bound");
     }
+#ifdef ___USE_STUPID
+    m_stupid_xarray->insert(pos, value);
+#else
     m_split_list->insert(pos, value);
     m_stupid_xarray->insert(pos, value);
+#endif
 }
 
 
@@ -269,12 +291,19 @@ void XArray::_erase(num pos, num len)
     if (pos < 0 || pos + len > _size()) {
         DIE("out of bound");
     }
+#ifdef ___USE_STUPID
+    m_stupid_xarray->erase(pos, len);
+#else
     m_split_list->erase(pos, len);
     m_stupid_xarray->erase(pos, len);
+#endif
 }
 
 wstring XArray::_getline(num x) const
 {
+#ifdef ___USE_STUPID
+    return m_stupid_xarray->getline(x);
+#else
     if (x < 0 || x >= lines()) {
         DIE("out of bound");
     }
@@ -285,10 +314,14 @@ wstring XArray::_getline(num x) const
         DIE("wrong result");
     }
     return ans;
+#endif
 }
 
 wstring XArray::_getline(num x, num y1, num y2) const
 {
+#ifdef ___USE_STUPID
+    return m_stupid_xarray->getline(x, y1, y2);
+#else
     if (x < 0 || x >= lines()) {
         DIE("out of bound");
     }
@@ -298,10 +331,14 @@ wstring XArray::_getline(num x, num y1, num y2) const
         DIE("wrong result");
     }
     return ans;
+#endif
 }
 
 Point XArray::_c2p(num c) const
 {
+#ifdef ___USE_STUPID
+    return m_stupid_xarray->cursor_to_point(c);
+#else
     num x = m_split_list->count_newline(0, c);
     num i = (x == 0 ? 0 : m_split_list->find_kth_newline(x - 1) + 1);
     num y = c - i;
@@ -310,15 +347,19 @@ Point XArray::_c2p(num c) const
         DIE("wrong result");
     }
     return ans;
+#endif
 }
 
 num XArray::_p2c(Point p) const
 {
-    // TODO
+#ifdef ___USE_STUPID
+    return m_stupid_xarray->point_to_cursor(p);
+#else
     num i = (p.x == 0 ? 0 : m_split_list->find_kth_newline(p.x - 1) + 1);
     num ans = i + p.y;
     if (ans != m_stupid_xarray->point_to_cursor(p)) {
         DIE("wrong result");
     }
     return ans;
+#endif
 }

@@ -44,6 +44,8 @@ void Controller::init()
     for (char ch = 'a'; ch <= 'z'; ++ch) {
         auto action = make_shared<InsertAfterCursorAction>(m_miv, (wchar_t)ch);
         register_keys(Mode::INSERT, { KeyCombo(string(1, ch)) }, action);
+        register_keys(Mode::INSERT, { KeyCombo(string(1, ch)) },
+                      make_shared<FlushAction>(m_miv));
     }
 }
 
