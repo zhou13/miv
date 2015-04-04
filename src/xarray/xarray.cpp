@@ -215,10 +215,11 @@ Point XArray::normal_to_virtual(Point np) const
  * *************************************************************************
  */
 
-#define ___USE_STUPID
+//#define ___USE_STUPID
 
 num XArray::_size() const
 {
+    //DEFINE_SCOPE_LOGGER;
 #ifdef ___USE_STUPID
     return m_stupid_xarray->size();
 #else
@@ -232,6 +233,7 @@ num XArray::_size() const
 
 num XArray::_lines() const
 {
+    //DEFINE_SCOPE_LOGGER;
 #ifdef ___USE_STUPID
     return m_stupid_xarray->lines();
 #else
@@ -245,6 +247,7 @@ num XArray::_lines() const
 
 num XArray::_line_size(num x) const
 {
+    //DEFINE_SCOPE_LOGGER;
 #ifdef ___USE_STUPID
     return m_stupid_xarray->line_size(x);
 #else
@@ -263,6 +266,7 @@ num XArray::_line_size(num x) const
 
 void XArray::_assign(const std::wstring &str)
 {
+    //DEFINE_SCOPE_LOGGER;
 #ifdef ___USE_STUPID
     m_stupid_xarray->assign(str);
 #else
@@ -274,6 +278,7 @@ void XArray::_assign(const std::wstring &str)
 
 void XArray::_insert(num pos, const std::wstring &value)
 {
+    //DEFINE_SCOPE_LOGGER;
     if (pos < 0 || pos > _size()) {
         DIE("out of bound");
     }
@@ -288,6 +293,7 @@ void XArray::_insert(num pos, const std::wstring &value)
 
 void XArray::_erase(num pos, num len)
 {
+    //DEFINE_SCOPE_LOGGER;
     if (pos < 0 || pos + len > _size()) {
         DIE("out of bound");
     }
@@ -301,6 +307,7 @@ void XArray::_erase(num pos, num len)
 
 wstring XArray::_getline(num x) const
 {
+    //DEFINE_SCOPE_LOGGER;
 #ifdef ___USE_STUPID
     return m_stupid_xarray->getline(x);
 #else
@@ -310,7 +317,7 @@ wstring XArray::_getline(num x) const
     num i = (x == 0 ? 0 : m_split_list->find_kth_newline(x - 1) + 1);
     num j = m_split_list->find_kth_newline(x);
     wstring ans = m_split_list->get(i, j);
-    if (ans != m_stupid_xarray->getline(x)) {
+    if (ans != m_stupid_xarray->getline(x)) { // TODO delete
         DIE("wrong result");
     }
     return ans;
@@ -319,6 +326,7 @@ wstring XArray::_getline(num x) const
 
 wstring XArray::_getline(num x, num y1, num y2) const
 {
+    //DEFINE_SCOPE_LOGGER;
 #ifdef ___USE_STUPID
     return m_stupid_xarray->getline(x, y1, y2);
 #else
@@ -336,6 +344,7 @@ wstring XArray::_getline(num x, num y1, num y2) const
 
 Point XArray::_c2p(num c) const
 {
+    //DEFINE_SCOPE_LOGGER;
 #ifdef ___USE_STUPID
     return m_stupid_xarray->cursor_to_point(c);
 #else
@@ -352,6 +361,7 @@ Point XArray::_c2p(num c) const
 
 num XArray::_p2c(Point p) const
 {
+    //DEFINE_SCOPE_LOGGER;
 #ifdef ___USE_STUPID
     return m_stupid_xarray->point_to_cursor(p);
 #else

@@ -16,7 +16,7 @@ struct SplitListBlock {
 SplitList::SplitList()
 {
     m_head = nullptr;
-    _size = 0;
+    m_size = 0;
 }
 
 SplitList::~SplitList()
@@ -29,19 +29,18 @@ void SplitList::assign(const wstring &str)
 {
     if (m_head != nullptr)
         delete m_head;
-    _size = (num)str.size();
-    m_head = _make_list(str, 0, _size);
+    m_size = (num)str.size();
+    m_head = _make_list(str, 0, m_size);
 }
 
 num SplitList::size() const
 {
-    return _size;
+    return m_size;
 }
 
 num SplitList::count_newline() const
 {
     return count_newline(0, size());
-    //return (num)count(m_str.begin(), m_str.end(), '\n');
 }
 
 num SplitList::count_newline(num begin, num end) const
@@ -56,9 +55,9 @@ num SplitList::count_newline(num begin, num end) const
             goto __L1;
         if (end <= 0)
             goto __L1;
-        for (num i = max(begin, (num)0); i < min(end, cur->size); ++i) {
-            if (cur->a[i] == '\n')
-                ++ans;
+        {
+        num s = max(begin, (num)0), t = min(end, cur->size);
+        ans += std::count(cur->a + s, cur->a + t, '\n');
         }
     __L1:
         begin -= cur->size;
@@ -87,6 +86,8 @@ void SplitList::insert(num pos, const std::wstring &value)
     m_head = _split(m_head, pos, tail);
     m_head = _concat(m_head, tmp);
     m_head = _concat(m_head, tail);
+
+    m_size += (num)value.size();
 }
 
 void SplitList::erase(num pos, num len)
@@ -96,6 +97,8 @@ void SplitList::erase(num pos, num len)
     m_head = _split(m_head, pos, middle);
     m_head = _concat(m_head, tail);
     delete middle;
+
+    m_size -= len;
 }
 
 num SplitList::find_kth_newline(num k) const
@@ -109,6 +112,7 @@ num SplitList::find_kth_newline(num k) const
                         return offset + i;
                     ++tot;
                 }
+            DIE("unexcepted error (not enough newlines in block)");
             break;
         }
         tot += cur->newline_count;
@@ -157,6 +161,9 @@ SplitListBlock *SplitList::_split(SplitListBlock *cur, num pos, SplitListBlock *
 
 SplitListBlock *SplitList::_concat(SplitListBlock *cur, SplitListBlock *tmp)
 {
+    if (cur == nullptr) {
+        return tmp;
+    }
     if (cur->next == nullptr) {
         cur->next = tmp;
         cur = _try_merge(cur);

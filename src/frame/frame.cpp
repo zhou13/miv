@@ -116,7 +116,8 @@ void Frame::set_size(Size size)
 vector<ScreenCell> Frame::gutter_sample()
 {
     num width = 0, tmp = 1;
-    while (m_array->lines() >= tmp) {
+    num line_count = m_array->lines();
+    while (line_count >= tmp) {
         tmp *= 10, width += 1;
     }
     ScreenCell cell = ScreenCell::make_line_number(false, 0, width);
@@ -132,11 +133,12 @@ Screen Frame::draw()
     // first: make gutter
     vector<ScreenCell> gsample = gutter_sample();
 
+    num line_count = m_array->lines();
     for (num x = m_page.x1(); x < m_page.x2(); ++x) {
         vector<ScreenCell> line = gsample;
         for (auto &cell: line) {
             if (cell.type == ScreenCellType::LINE_NUMBER) {
-                if (x < m_array->lines()) {
+                if (x < line_count) {
                     cell.enabled = true;
                     cell.line_number = x + 1;
                 }

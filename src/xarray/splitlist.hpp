@@ -24,7 +24,7 @@ public:
 private:
     //wstring m_str;
     SplitListBlock *m_head;
-    num _size;
+    num m_size;
 
     SplitListBlock *_make_list(const wstring &str, num begin, num end);
     SplitListBlock *_split(SplitListBlock *cur, num pos, SplitListBlock *&tmp);
