@@ -50,10 +50,10 @@ struct Vector {
     num x, y;
     Vector() : x(0), y(0) {}
     Vector(num x, num y) : x(x), y(y) {}
-    Vector operator+(const Vector &rhs) {
+    Vector operator+(const Vector &rhs) const {
         return Vector(x + rhs.x, y + rhs.y);
     }
-    Vector operator-(const Vector &rhs) {
+    Vector operator-(const Vector &rhs) const {
         return Vector(x - rhs.x, y - rhs.y);
     }
 };
@@ -62,19 +62,19 @@ struct Point {
     num x, y;
     Point() : x(0), y(0) {}
     Point(num x, num y) : x(x), y(y) {}
-    Point operator+(const Vector &rhs) {
+    Point operator+(const Vector &rhs) const {
         return Point(x + rhs.x, y + rhs.y);
     }
-    Point operator-(const Vector &rhs) {
+    Point operator-(const Vector &rhs) const {
         return Point(x - rhs.x, y - rhs.y);
     }
+    bool operator==(const Point &p) const {
+        return x==p.x && y==p.y;
+    }
+    bool operator!=(const Point &p) const {
+        return x!=p.x || y!=p.y;
+    }
 };
-
-
-inline Vector operator-(const Vector &lhs, const Vector &rhs)
-{
-    return Vector(lhs.x - rhs.x, lhs.y - rhs.y);
-}
 
 struct Rect {
 	Point origin;

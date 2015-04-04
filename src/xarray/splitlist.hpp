@@ -11,6 +11,14 @@ public:
     num size() const;
     num count_newline() const;
     num count_newline(num begin, num end) const;
+    wstring get(num begin, num end) const;
 
-    size_t find_kth_newline(size_t k) const;
+    void insert(num pos, const std::wstring &value);
+    void erase(num pos, num len);
+
+    // k starting from 0; return size() if not found
+    num find_kth_newline(num k) const;
+
+private:
+    wstring m_str;
 };

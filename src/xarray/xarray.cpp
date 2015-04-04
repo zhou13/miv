@@ -153,6 +153,11 @@ wstring XArray::getline(num x, num y1, num y2) const
     if (x < 0 || x >= lines()) {
         return wstring();
     }
+    y1 = std::max(y1, (num)0);
+    y2 = std::min(y2, _line_size(x));
+    if (y1 > y2) {
+        return wstring();
+    }
     return _getline(x, y1, y2);
 }
 
@@ -174,6 +179,14 @@ void XArray::setlinev(num x, const wstring &value)
 
 void XArray::setline(num x, num y1, num y2, const wstring &value)
 {
+    if (x < 0 || x >= lines()) {
+        DIE("out of bound");
+    }
+    y1 = std::max(y1, (num)0);
+    y2 = std::min(y2, _line_size(x));
+    if (y1 > y2) {
+        DIE("out of bound");
+    }
     num p = _p2c(Point(x, y1));
     _erase(p, y2 - y1);
     _insert(p, value);
@@ -195,33 +208,48 @@ Point XArray::normal_to_virtual(Point np) const
 }
 
 
-/*
+/* *************************************************************************
+ *
  * The following is core functions of XArray
+ *
+ * *************************************************************************
  */
 
 num XArray::_size() const
 {
-    return m_stupid_xarray->size(); /*
     num ans = m_split_list->size();
     if (ans != m_stupid_xarray->size()) {
         DIE("wrong result");
     }
-    return ans;*/
+    return ans;
 }
 
 num XArray::_lines() const
 {
-    //num ans = m_split_list->count_newline() + 1;
-    return m_stupid_xarray->lines();
+    num ans = m_split_list->count_newline() + 1;
+    if (ans != m_stupid_xarray->lines()) {
+        DIE("wrong result");
+    }
+    return ans;
 }
 
 num XArray::_line_size(num x) const
 {
-    return m_stupid_xarray->line_size(x);
+    if (x < 0 || x >= _lines()) {
+        DIE("out of bound");
+    }
+    num i = (x == 0 ? 0 : m_split_list->find_kth_newline(x - 1) + 1);
+    num j = m_split_list->find_kth_newline(x);
+    num ans = j - i;
+    if (ans != m_stupid_xarray->line_size(x)) {
+        DIE("wrong result");
+    }
+    return ans;
 }
 
 void XArray::_assign(const std::wstring &str)
 {
+    m_split_list->assign(str);
     m_stupid_xarray->assign(str);
 }
 
@@ -231,6 +259,7 @@ void XArray::_insert(num pos, const std::wstring &value)
     if (pos < 0 || pos > _size()) {
         DIE("out of bound");
     }
+    m_split_list->insert(pos, value);
     m_stupid_xarray->insert(pos, value);
 }
 
@@ -240,6 +269,7 @@ void XArray::_erase(num pos, num len)
     if (pos < 0 || pos + len > _size()) {
         DIE("out of bound");
     }
+    m_split_list->erase(pos, len);
     m_stupid_xarray->erase(pos, len);
 }
 
@@ -248,7 +278,13 @@ wstring XArray::_getline(num x) const
     if (x < 0 || x >= lines()) {
         DIE("out of bound");
     }
-    return m_stupid_xarray->getline(x);
+    num i = (x == 0 ? 0 : m_split_list->find_kth_newline(x - 1) + 1);
+    num j = m_split_list->find_kth_newline(x);
+    wstring ans = m_split_list->get(i, j);
+    if (ans != m_stupid_xarray->getline(x)) {
+        DIE("wrong result");
+    }
+    return ans;
 }
 
 wstring XArray::_getline(num x, num y1, num y2) const
@@ -256,15 +292,33 @@ wstring XArray::_getline(num x, num y1, num y2) const
     if (x < 0 || x >= lines()) {
         DIE("out of bound");
     }
-    return m_stupid_xarray->getline(x, y1, y2);
+    num i = (x == 0 ? 0 : m_split_list->find_kth_newline(x - 1) + 1);
+    wstring ans = m_split_list->get(i + y1, i + y2);
+    if (ans != m_stupid_xarray->getline(x, y1, y2)) {
+        DIE("wrong result");
+    }
+    return ans;
 }
 
 Point XArray::_c2p(num c) const
 {
-    return m_stupid_xarray->cursor_to_point(c);
+    num x = m_split_list->count_newline(0, c);
+    num i = (x == 0 ? 0 : m_split_list->find_kth_newline(x - 1) + 1);
+    num y = c - i;
+    Point ans(x, y);
+    if (ans != m_stupid_xarray->cursor_to_point(c)) {
+        DIE("wrong result");
+    }
+    return ans;
 }
 
 num XArray::_p2c(Point p) const
 {
-    return m_stupid_xarray->point_to_cursor(p);
+    // TODO
+    num i = (p.x == 0 ? 0 : m_split_list->find_kth_newline(p.x - 1) + 1);
+    num ans = i + p.y;
+    if (ans != m_stupid_xarray->point_to_cursor(p)) {
+        DIE("wrong result");
+    }
+    return ans;
 }

@@ -63,7 +63,11 @@ void Controller::key_press(KeyCombo key)
         auto prefix = make_pair(mode, m_keys);
         if (m_keymap_prefices.find(prefix) != m_keymap_prefices.end())
             break;
-        mlog->debug("erase key[{}]", (char)(m_keys.begin()->key));
+        string str = "";
+        for (auto &c : m_keys)
+            str += c.to_string() + " ";
+        mlog->debug("erase key={}, all={}",
+                    m_keys.begin()->to_string(), str);
         m_keys.erase(m_keys.begin());
     }
 }
