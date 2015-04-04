@@ -24,8 +24,8 @@ public:
     //void draw(Frame *frame = nullptr);
     void redraw(Frame *frame = nullptr);
 
-    Frame *frame(int id = -1);
-    int frame_index(const Frame *frame) const;
+    Frame *frame(num id = -1);
+    num frame_index(const Frame *frame) const;
 
 private:
     UI *m_ui;

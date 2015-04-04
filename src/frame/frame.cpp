@@ -29,14 +29,14 @@ void Frame::move_cursor(Vector offset)
     //printf("Frame.move_cursor.begin: (%d, %d)\n",
     //       (int)ncursor.x, (int)ncursor.y);
 
-    ptrdiff_t lines = m_array->lines();
+    num lines = m_array->lines();
     if (absolute_cursor.x >= lines) {
-        ptrdiff_t delta = absolute_cursor.x - lines + 1;
+        num delta = absolute_cursor.x - lines + 1;
         ncursor.x -= delta;
         absolute_cursor.x -= delta;
     }
     if (absolute_cursor.x < 0) {
-        ptrdiff_t delta = -absolute_cursor.x;
+        num delta = -absolute_cursor.x;
         ncursor.x += delta;
         absolute_cursor.x += delta;
     }
@@ -44,13 +44,13 @@ void Frame::move_cursor(Vector offset)
     //printf("Frame.move_cursor.middle: (%d, %d)\n",
    //        (int)ncursor.x, (int)ncursor.y);
 
-    ptrdiff_t line_width = m_array->getline(absolute_cursor.x).length();
+    num line_width = m_array->getline(absolute_cursor.x).length();
     if (absolute_cursor.y >= line_width) {
-        ptrdiff_t delta = absolute_cursor.y - line_width + 1;
+        num delta = absolute_cursor.y - line_width + 1;
         ncursor.y -= delta;
     }
     if (absolute_cursor.y < 0) {
-        ptrdiff_t delta = -absolute_cursor.y;
+        num delta = -absolute_cursor.y;
         ncursor.y += delta;
     }
 
@@ -60,7 +60,7 @@ void Frame::move_cursor(Vector offset)
     adjust_page();
 }
 
-void Frame::move_page(ptrdiff_t offset)
+void Frame::move_page(num offset)
 {
     (void)offset;
     mlog->critical("Not implemented!");
@@ -72,7 +72,7 @@ void Frame::adjust_page()
         m_page += Vector(m_cursor.x, 0);
         m_cursor.x = 0;
     }
-    if ((size_t)m_cursor.x >= m_page.height()) {
+    if ((num)m_cursor.x >= m_page.height()) {
         m_page += Vector(m_cursor.x - m_page.height() + 1, 0);
         m_cursor.x = m_page.height() - 1;
         //printf("!!!!!!!!!!!!\n!!!!!!!!!!! x1=%d x2=%d\n",(int)m_page.x1(),(int)m_page.x2());
@@ -81,7 +81,7 @@ void Frame::adjust_page()
         m_page += Vector(0, m_cursor.y);
         m_cursor.y = 0;
     }
-    if ((size_t)m_cursor.y >= m_page.width()) {
+    if ((num)m_cursor.y >= m_page.width()) {
         m_page += Vector(0, m_cursor.y - m_page.width() + 1);
         m_cursor.y = m_page.width() - 1;
     }
@@ -107,7 +107,7 @@ void Frame::set_size(Size size)
 
 vector<ScreenCell> Frame::gutter_sample()
 {
-    size_t width = 0, tmp = 1;
+    num width = 0, tmp = 1;
     while (m_array->lines() >= tmp) {
         tmp *= 10, width += 1;
     }
@@ -124,7 +124,7 @@ Screen Frame::draw()
     // first: make gutter
     vector<ScreenCell> gsample = gutter_sample();
 
-    for (size_t x = m_page.x1(); x < m_page.x2(); ++x) {
+    for (num x = m_page.x1(); x < m_page.x2(); ++x) {
         vector<ScreenCell> line = gsample;
         for (auto &cell: line) {
             if (cell.type == ScreenCellType::LINE_NUMBER) {
@@ -138,7 +138,7 @@ Screen Frame::draw()
     }
 
     // second: make text
-    for (size_t x = m_page.x1(); x < m_page.x2(); ++x) {
+    for (num x = m_page.x1(); x < m_page.x2(); ++x) {
         auto line = m_array->getline(x, m_page.y1(), m_page.y2());
         vector<ScreenCell> &target = screen.cells[x - m_page.x1()];
         for (auto &ch: line) {

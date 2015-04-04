@@ -450,7 +450,7 @@ template <>
 struct hash<KeyCombo> {
     size_t operator()(const KeyCombo& k) const
     {
-        return (hash<int>()((int)k.key)
+        return (hash<size_t>()((size_t)k.key)
             ^ (hash<bool>()(k.control) >> 10)
             ^ (hash<bool>()(k.alt) >> 11)
             ^ (hash<bool>()(k.super) >> 12)

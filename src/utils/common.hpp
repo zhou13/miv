@@ -14,6 +14,8 @@
 
 #include <boost/program_options/variables_map.hpp>
 
+typedef ptrdiff_t num;
+
 using std::map;
 using std::set;
 using std::hash;
@@ -32,18 +34,18 @@ using std::dynamic_pointer_cast;
 using std::unordered_map;
 
 struct Size {
-    size_t height, width;
+    num height, width;
     Size() : height(0), width(0) {}
-    Size(size_t h, size_t w) : height(h), width(w) {}
+    Size(num h, num w) : height(h), width(w) {}
     bool operator ==(const Size &b) const {
         return height == b.height && width == b.width;
     }
 };
 
 struct Vector {
-    ptrdiff_t x, y;
+    num x, y;
     Vector() : x(0), y(0) {}
-    Vector(ptrdiff_t x, ptrdiff_t y) : x(x), y(y) {}
+    Vector(num x, num y) : x(x), y(y) {}
     Vector operator+(const Vector &rhs) {
         return Vector(x + rhs.x, y + rhs.y);
     }
@@ -53,9 +55,9 @@ struct Vector {
 };
 
 struct Point {
-    ptrdiff_t x, y;
+    num x, y;
     Point() : x(0), y(0) {}
-    Point(ptrdiff_t x, ptrdiff_t y) : x(x), y(y) {}
+    Point(num x, num y) : x(x), y(y) {}
     Point operator+(const Vector &rhs) {
         return Point(x + rhs.x, y + rhs.y);
     }
@@ -74,15 +76,15 @@ struct Rect {
 	Point origin;
 	Size size;
     Rect() : origin(), size() {}
-    Rect(size_t x1, size_t x2, size_t y1, size_t y2) :
+    Rect(num x1, num x2, num y1, num y2) :
         origin(x1, y1), size(x2-x1, y2-y1) {}
     Rect(Point o, Size s) : origin(o), size(s) {}
-    size_t x1() { return origin.x; }
-    size_t x2() { return origin.x + size.height; }
-    size_t y1() { return origin.y; }
-    size_t y2() { return origin.y + size.width; }
-    size_t height() { return size.height; }
-    size_t width() { return size.width; }
+    num x1() { return origin.x; }
+    num x2() { return origin.x + size.height; }
+    num y1() { return origin.y; }
+    num y2() { return origin.y + size.width; }
+    num height() { return size.height; }
+    num width() { return size.width; }
     Rect &operator+=(const Vector &rhs) {
         origin = origin + rhs; // todo
         return *this;

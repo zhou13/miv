@@ -72,16 +72,16 @@ void Miv::draw(Frame *frame)
 }
 */
 
-Frame *Miv::frame(int id)
+Frame *Miv::frame(num id)
 {
     if (id == -1)
         return m_currframe;
     return m_frames[id].get();
 }
 
-int Miv::frame_index(const Frame *frame) const
+num Miv::frame_index(const Frame *frame) const
 {
-    for (size_t i = 0; i < m_frames.size(); ++i) {
+    for (num i = 0; i < (num)m_frames.size(); ++i) {
         if (m_frames[i].get() == frame) {
             return i;
         }

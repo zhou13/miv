@@ -41,7 +41,7 @@ public:
     }
 
 private:
-   string m_old_funcname;
+    string m_old_funcname;
 
     void set_pattern() {
         mlog->set_pattern(

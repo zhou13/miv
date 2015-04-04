@@ -12,32 +12,32 @@ public:
     XArray(const std::wstring &init_value);
 	~XArray();
 
-    size_t size() const;
-    size_t lines() const;
+    num size() const;
+    num lines() const;
 
     void assign(const std::wstring &value);
-    void insert(size_t pos, const std::wstring &value);
-    void erase(size_t pos, size_t len);
+    void insert(num pos, const std::wstring &value);
+    void erase(num pos, num len);
 
-    wstring getline(size_t x) const;
-    wstring getline(size_t x, size_t y1, size_t y2) const;
+    wstring getline(num x) const;
+    wstring getline(num x, num y1, num y2) const;
 
-    Point cursor_to_point(size_t c) const;
-    size_t point_to_cursor(Point p) const;
+    Point c2p(num c) const;
+    num p2c(Point p) const;
 
 private:
-    size_t _size() const;
-    size_t _lines() const;
+    num _size() const;
+    num _lines() const;
 
     void _assign(const std::wstring &value);
-    void _insert(size_t pos, const std::wstring &value);
-    void _erase(size_t pos, size_t len);
-    wstring _getline(size_t x) const;
-    wstring _getline(size_t x, size_t y1, size_t y2) const;
-    wstring _setline(size_t x, const wstring &value) const;
+    void _insert(num pos, const std::wstring &value);
+    void _erase(num pos, num len);
+    wstring _getline(num x) const;
+    wstring _getline(num x, num y1, num y2) const;
+    wstring _setline(num x, const wstring &value) const;
 
-    Point _c2p(size_t c) const;
-    size_t _p2c(Point p) const;
+    Point _c2p(num c) const;
+    num _p2c(Point p) const;
 
 
     unique_ptr<StupidXArray> m_stupid_xarray;
@@ -46,9 +46,9 @@ private:
 /*
     class iterator {
         XArray *xarray;
-        size_t i;
+        num i;
     public:
-        iterator (XArray *xarray, size_t i)
+        iterator (XArray *xarray, num i)
             :xarray(xarray), i(i) {}
         iterator &operator++() {
             ++i;

@@ -21,8 +21,8 @@ struct ScreenCell {
         };
         struct {
             bool enabled;
-            ptrdiff_t line_number;
-            size_t width;
+            num line_number;
+            num width;
         };
     };
     ScreenCell() = default;
@@ -32,11 +32,11 @@ struct ScreenCell {
         cell.ch = ch;
         return cell;
     }
-    static ScreenCell make_line_number(bool e, ptrdiff_t num, size_t w) {
+    static ScreenCell make_line_number(bool e, num n, num w) {
         ScreenCell cell;
         cell.type = ScreenCellType::LINE_NUMBER;
         cell.enabled = e;
-        cell.line_number = num;
+        cell.line_number = n;
         cell.width = w;
         return cell;
     }

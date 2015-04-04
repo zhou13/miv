@@ -73,7 +73,7 @@ void NcursesUI::paint(int frame_id, const Screen &screen)
             if (cell.type == ScreenCellType::LINE_NUMBER) {
                 string tmp = "";
                 if (cell.enabled) {
-                    ptrdiff_t x = cell.line_number;
+                    num x = cell.line_number;
                     bool neg = false;
                     if (x < 0) {
                         x = -x;
@@ -87,7 +87,7 @@ void NcursesUI::paint(int frame_id, const Screen &screen)
                     if (tmp.size() == 0)
                        tmp = "0";
                 }
-                while (tmp.size() < cell.width)
+                while ((num)tmp.size() < cell.width)
                     tmp = " " + tmp;
                 str1 += tmp + " ";
             }
@@ -119,7 +119,7 @@ Size NcursesUI::ask_size(int frame_id,
                          const vector<ScreenCell> &gutter_sample)
 {
     (void)frame_id;
-    size_t height = H, width = W;
+    num height = H, width = W;
     for (auto &cell: gutter_sample) {
         if (cell.type == ScreenCellType::TEXT)
             width -= 1;
