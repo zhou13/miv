@@ -85,20 +85,22 @@ void Frame::adjust_page()
         m_page += Vector(0, m_cursor.y - m_page.width() + 1);
         m_cursor.y = m_page.width() - 1;
     }
-    // TODO horizontal scroll
 }
 
 void Frame::set_mode(Mode mode)
 {
-    //std::printf("Frame.set_mode: %s\n", MODE_TO_STRING(mode).c_str());
+    DEFINE_SCOPE_LOGGER;
+    mlog->debug("mode is set to {}", MODE_TO_STRING(mode));
+
     m_mode = mode;
     m_miv->redraw(this);
 }
 
 void Frame::set_size(Size size)
 {
-    //std::printf("Frame.set_size: (%d %d)\n",
-    //            (int)size.height, (int)size.width);
+    DEFINE_SCOPE_LOGGER;
+    mlog->debug("size is set to ({}, {})", size.height, size.width);
+
     if (size == m_page.size)
         return;
     m_page.size = size;

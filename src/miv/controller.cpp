@@ -5,12 +5,6 @@
 #include "miv/miv.hpp"
 #include "action/common.hpp"
 
-// input: sequence of KeyCombo
-// output: sequence of Action
-class Trie {
-
-};
-
 
 Controller::Controller(Miv *miv) :
     m_miv(miv)

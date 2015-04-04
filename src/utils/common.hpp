@@ -96,3 +96,5 @@ struct Rect {
 };
 
 #include "utils/logger.hpp"
+
+#define DIE(args...) { DEFINE_SCOPE_LOGGER; mlog->error(args); exit(1);}

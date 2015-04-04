@@ -867,6 +867,15 @@ KeyCombo::KeyCombo(Key key) :
 {
 }
 
+KeyCombo::KeyCombo(bool control, bool super, bool alt, bool shift, Key key) :
+    control(control),
+    super(super),
+    alt(alt),
+    shift(shift),
+    key(key)
+{
+}
+
 KeyCombo::KeyCombo(string str) :
     control(false),
     super(false),

@@ -53,3 +53,12 @@ public:
     virtual ~LeaveInsertModeAction() {}
     virtual void perform();
 };
+
+class InsertAfterCursorAction : public Action {
+public:
+    InsertAfterCursorAction(Miv *miv, wchar_t ch) : Action(miv), ch(ch) {}
+    virtual ~InsertAfterCursorAction() {}
+    virtual void perform();
+private:
+    wchar_t ch;
+};

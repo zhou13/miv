@@ -429,6 +429,7 @@ struct KeyCombo {
 
     KeyCombo() = default;
     KeyCombo(Key key);
+    KeyCombo(bool control, bool super, bool alt, bool shift, Key key);
     KeyCombo(string str);
     string to_string();
 

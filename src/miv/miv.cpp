@@ -53,6 +53,8 @@ void Miv::redraw(Frame *frame) {
         }
         return;
     }
+
+    DEFINE_SCOPE_LOGGER;
     auto size = m_ui->ask_size(frame_index(frame),
                                m_currframe->gutter_sample());
     m_currframe->set_size(size);
