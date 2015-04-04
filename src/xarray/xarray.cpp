@@ -1,4 +1,5 @@
 #include "xarray/xarray.hpp"
+#include "xarray/splitlist.hpp"
 #include <cassert>
 
 class StupidXArray {
@@ -11,6 +12,13 @@ public:
     num lines() const {
         return count(m_str.begin(), m_str.end(), '\n')  + 1;
     };
+    num line_size(num x) const {
+        num i = point_to_cursor(Point(x, 0));
+        num j = i;
+        while (j < (num)m_str.size() && m_str[j] != '\n')
+            ++j;
+        return j - i;
+    }
     void assign(const std::wstring &str) { m_str = str; }
 
     void insert(num pos, const std::wstring &value) {
@@ -26,7 +34,7 @@ public:
             return wstring();
         wstring ans;
         for (num i = point_to_cursor(Point(x, 0));
-             i < m_str.size() && m_str[i] != '\n';
+             i < (num)m_str.size() && m_str[i] != '\n';
              ++i) {
             ans += m_str[i];
         }
@@ -34,7 +42,7 @@ public:
     }
     wstring getline(num x, num y1, num y2) const {
         wstring s = getline(x);
-        if (y1 >= s.size() || y2 <= y1)
+        if (y1 >= (num)s.size() || y2 <= y1)
             return wstring();
         return s.substr(y1, y2 - y1);
     }
@@ -52,7 +60,7 @@ public:
     }
     num point_to_cursor(Point p) const {
         Point t(0, 0);
-        for (num i = 0; i < m_str.size(); ++i) {
+        for (num i = 0; i < (num)m_str.size(); ++i) {
             if (t.x == p.x && t.y == p.y)
                 return i;
             if (m_str[i] == '\n') {
@@ -72,6 +80,7 @@ private:
 XArray::XArray()
 {
     m_stupid_xarray = make_unique<StupidXArray>();
+    m_split_list = make_unique<SplitList>();
 }
 
 XArray::XArray(const std::wstring &init_value)
@@ -82,6 +91,11 @@ XArray::XArray(const std::wstring &init_value)
 
 XArray::~XArray()
 {
+}
+
+void XArray::set_wrap(num width)
+{
+    mlog->warn("does not support set_wrap now");
 }
 
 num XArray::size() const
@@ -99,30 +113,87 @@ void XArray::assign(const std::wstring &value)
     return _assign(value);
 }
 
-void XArray::erase(num pos, num len)
+void XArray::insert(Point pos, const std::wstring &value)
 {
-    return _erase(pos, len);
+    num p = _p2c(pos);
+    _insert(p, value);
 }
 
-std::wstring XArray::getline(num x) const
+void XArray::insertv(Point pos, const std::wstring &value)
 {
+    DIE("undefined (TODO)."); // TODO
+}
+
+void XArray::erase(Point pos, num len)
+{
+    num p = _p2c(pos);
+    _erase(p, len);
+}
+
+void XArray::erasev(Point pos, num len)
+{
+    DIE("undefined (TODO)."); // TODO
+}
+
+wstring XArray::getline(num x) const
+{
+    if (x < 0 || x >= lines()) {
+        return wstring();
+    }
     return _getline(x);
 }
 
-std::wstring XArray::getline(num x, num y1, num y2) const
+wstring XArray::getlinev(num x) const
 {
+    DIE("undefined (TODO)."); // TODO
+}
+
+wstring XArray::getline(num x, num y1, num y2) const
+{
+    if (x < 0 || x >= lines()) {
+        return wstring();
+    }
     return _getline(x, y1, y2);
 }
 
-Point XArray::c2p(num c) const
+wstring XArray::getlinev(num x, num y1, num y2) const
 {
-    return _c2p(c);
+    DIE("undefined (TODO)."); // TODO
 }
 
-num XArray::p2c(Point p) const
+void XArray::setline(num x, const wstring &value)
 {
-    return _p2c(p);
+    num len = _line_size(x);
+    setline(x, 0, len, value);
 }
+
+void XArray::setlinev(num x, const wstring &value)
+{
+    DIE("undefined (TODO)."); // TODO
+}
+
+void XArray::setline(num x, num y1, num y2, const wstring &value)
+{
+    num p = _p2c(Point(x, y1));
+    _erase(p, y2 - y1);
+    _insert(p, value);
+}
+
+void XArray::setlinev(num x, num y1, num y2, const wstring &value)
+{
+    DIE("undefined (TODO)."); // TODO
+}
+
+Point XArray::virtual_to_normal(Point vp) const
+{
+    DIE("undefined (TODO)."); // TODO
+}
+
+Point XArray::normal_to_virtual(Point np) const
+{
+    DIE("undefined (TODO)."); // TODO
+}
+
 
 /*
  * The following is core functions of XArray
@@ -130,12 +201,23 @@ num XArray::p2c(Point p) const
 
 num XArray::_size() const
 {
-    return m_stupid_xarray->size();
+    return m_stupid_xarray->size(); /*
+    num ans = m_split_list->size();
+    if (ans != m_stupid_xarray->size()) {
+        DIE("wrong result");
+    }
+    return ans;*/
 }
 
 num XArray::_lines() const
 {
+    //num ans = m_split_list->count_newline() + 1;
     return m_stupid_xarray->lines();
+}
+
+num XArray::_line_size(num x) const
+{
+    return m_stupid_xarray->line_size(x);
 }
 
 void XArray::_assign(const std::wstring &str)
@@ -146,22 +228,34 @@ void XArray::_assign(const std::wstring &str)
 
 void XArray::_insert(num pos, const std::wstring &value)
 {
+    if (pos < 0 || pos > _size()) {
+        DIE("out of bound");
+    }
     m_stupid_xarray->insert(pos, value);
 }
 
 
 void XArray::_erase(num pos, num len)
 {
+    if (pos < 0 || pos + len > _size()) {
+        DIE("out of bound");
+    }
     m_stupid_xarray->erase(pos, len);
 }
 
 wstring XArray::_getline(num x) const
 {
+    if (x < 0 || x >= lines()) {
+        DIE("out of bound");
+    }
     return m_stupid_xarray->getline(x);
 }
 
 wstring XArray::_getline(num x, num y1, num y2) const
 {
+    if (x < 0 || x >= lines()) {
+        DIE("out of bound");
+    }
     return m_stupid_xarray->getline(x, y1, y2);
 }
 

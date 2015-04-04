@@ -4,6 +4,7 @@
 #include <string>
 
 class StupidXArray;
+class SplitList;
 
 // maintain an array of char: S[0..n-1]
 class XArray {
@@ -30,13 +31,16 @@ public:
 
     void setline(num x, const wstring &value);
     void setlinev(num x, const wstring &value);
+    void setline(num x, num y1, num y2, const wstring &value);
+    void setlinev(num x, num y1, num y2, const wstring &value);
 
-    void virtual_to_normal();
-    void normal_to_virtual();
+    Point virtual_to_normal(Point vp) const;
+    Point normal_to_virtual(Point np) const;
 
 private:
     num _size() const;
     num _lines() const;
+    num _line_size(num x) const;
 
     void _assign(const std::wstring &value);
     void _insert(num pos, const std::wstring &value);
@@ -50,6 +54,7 @@ private:
 
 
     unique_ptr<StupidXArray> m_stupid_xarray;
+    unique_ptr<SplitList> m_split_list;
 };
 
 /*
