@@ -41,3 +41,20 @@ void LeaveInsertModeAction::perform()
 {
     m_miv->frame()->set_mode(Mode::NORMAL);
 }
+
+
+void InsertAfterCursorAction::perform()
+{
+    auto frame = m_miv->frame();
+    XArray *array = frame->array();
+    Point cursor = frame->page().origin + frame->cursor();
+    array->insertv(cursor, wstring(1, ch));
+}
+
+
+void DeleteCurrentLineAction::perform()
+{
+    auto frame = m_miv->frame();
+    XArray *array = frame->array();
+    num line_number = frame->page().origin.x + frame->cursor().x;
+}

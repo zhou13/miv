@@ -1,3 +1,4 @@
+*.autosave
 CMakeLists.txt.user*
 
 build

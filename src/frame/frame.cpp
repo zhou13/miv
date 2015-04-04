@@ -15,10 +15,19 @@ Frame::~Frame()
 {
 }
 
+void Frame::set_mode(Mode mode)
+{
+    DEFINE_SCOPE_LOGGER;
+    mlog->debug("mode is set to {}", MODE_TO_STRING(mode));
+
+    m_mode = mode;
+    m_miv->redraw(this);
+}
+
 void Frame::set_cursor(Point point)
 {
-    (void)point;
-    // todo
+    m_cursor = point;
+    adjust_cursor();
 }
 
 void Frame::move_cursor(Vector offset)
@@ -60,11 +69,19 @@ void Frame::move_cursor(Vector offset)
     adjust_page();
 }
 
-void Frame::move_page(num offset)
+void Frame::move_page(Vector offset)
 {
     (void)offset;
-    mlog->critical("Not implemented!");
+    DIE("Not implemented!");
 }
+
+
+void Frame::set_page(Rect m_page)
+{
+    (void)m_page;
+    DIE("Not implemented!");
+}
+
 
 void Frame::adjust_page()
 {
@@ -87,14 +104,6 @@ void Frame::adjust_page()
     }
 }
 
-void Frame::set_mode(Mode mode)
-{
-    DEFINE_SCOPE_LOGGER;
-    mlog->debug("mode is set to {}", MODE_TO_STRING(mode));
-
-    m_mode = mode;
-    m_miv->redraw(this);
-}
 
 void Frame::set_size(Size size)
 {

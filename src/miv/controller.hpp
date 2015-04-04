@@ -14,6 +14,7 @@ public:
     void init();
     void key_press(KeyCombo key);
     shared_ptr<Action> pop_next_action();
+    // Note: 2015/04/04 shared_ptr is required because Action is an interface
     void register_keys(Mode mode,
                        const vector<KeyCombo> &keys,
                        shared_ptr<Action> action);

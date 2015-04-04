@@ -18,16 +18,15 @@ public:
     Vector cursor() const { return m_cursor; }
     void set_cursor(Point point);
     void move_cursor(Vector offset);
-    void move_page(num offset);
+    void adjust_cursor();
+
+    Rect page() const { return m_page; }
+    void set_page(Rect m_page);
+    void move_page(Vector offset);
     void adjust_page();
 
     // edit
-    wchar_t getchar(Point point);
-    void setchar(Point point, wchar_t ch);
-    wstring getline(num line_number);
-    void setline(num line_number, wstring str);
-    void insert(Point point, wstring str);
-    void erase(Point point, num );
+    XArray *array() { return m_array; }
 
     // render
     vector<ScreenCell> gutter_sample();

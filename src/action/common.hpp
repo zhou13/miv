@@ -62,3 +62,10 @@ public:
 private:
     wchar_t ch;
 };
+
+class DeleteCurrentLineAction : public Action {
+public:
+    DeleteCurrentLineAction(Miv *miv) : Action(miv) {}
+    virtual ~DeleteCurrentLineAction() {}
+    virtual void perform();
+};

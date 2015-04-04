@@ -22,26 +22,29 @@ void Controller::init()
                   make_shared<CursorMoveLeftAction>(m_miv));
     register_keys(Mode::NORMAL, { KeyCombo("h") },
                   make_shared<FlushAction>(m_miv));
-
     register_keys(Mode::NORMAL, { KeyCombo("j") },
                   make_shared<CursorMoveDownAction>(m_miv));
     register_keys(Mode::NORMAL, { KeyCombo("j") },
                   make_shared<FlushAction>(m_miv));
-
     register_keys(Mode::NORMAL, { KeyCombo("k") },
                   make_shared<CursorMoveUpAction>(m_miv));
     register_keys(Mode::NORMAL, { KeyCombo("k") },
                   make_shared<FlushAction>(m_miv));
-
     register_keys(Mode::NORMAL, { KeyCombo("l") },
                   make_shared<CursorMoveRightAction>(m_miv));
     register_keys(Mode::NORMAL, { KeyCombo("l") },
                   make_shared<FlushAction>(m_miv));
-
     register_keys(Mode::NORMAL, { KeyCombo("i") },
                   make_shared<EnterInsertModeAction>(m_miv));
     register_keys(Mode::INSERT, { KeyCombo("~") },
                   make_shared<LeaveInsertModeAction>(m_miv));
+    register_keys(Mode::NORMAL, { KeyCombo("d"), KeyCombo("d") },
+                  make_shared<EnterInsertModeAction>(m_miv));
+
+    for (char ch = 'a'; ch <= 'z'; ++ch) {
+        auto action = make_shared<InsertAfterCursorAction>(m_miv, (wchar_t)ch);
+        register_keys(Mode::INSERT, { KeyCombo(string(1, 'a')) }, action);
+    }
 }
 
 void Controller::key_press(KeyCombo key)
