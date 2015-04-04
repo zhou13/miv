@@ -8,25 +8,41 @@ class StupidXArray;
 // maintain an array of char: S[0..n-1]
 class XArray {
 public:
-
     XArray();
     XArray(const std::wstring &init_value);
 	~XArray();
 
-	size_t size() const;
+    size_t size() const;
     size_t lines() const;
 
-    void assign(const std::wstring &str);
-
-	void insert(size_t pos, const std::wstring &value);
-
-	void erase(size_t pos, size_t len);
+    void assign(const std::wstring &value);
+    void insert(size_t pos, const std::wstring &value);
+    void erase(size_t pos, size_t len);
 
     wstring getline(size_t x) const;
     wstring getline(size_t x, size_t y1, size_t y2) const;
 
     Point cursor_to_point(size_t c) const;
     size_t point_to_cursor(Point p) const;
+
+private:
+    size_t _size() const;
+    size_t _lines() const;
+
+    void _assign(const std::wstring &value);
+    void _insert(size_t pos, const std::wstring &value);
+    void _erase(size_t pos, size_t len);
+    wstring _getline(size_t x) const;
+    wstring _getline(size_t x, size_t y1, size_t y2) const;
+    wstring _setline(size_t x, const wstring &value) const;
+
+    Point _c2p(size_t c) const;
+    size_t _p2c(Point p) const;
+
+
+    unique_ptr<StupidXArray> m_stupid_xarray;
+};
+
 /*
     class iterator {
         XArray *xarray;
@@ -47,6 +63,3 @@ public:
         }
     };
 */
-private:
-    unique_ptr<StupidXArray> m_stupid_xarray;
-};

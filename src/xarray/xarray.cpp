@@ -77,7 +77,7 @@ XArray::XArray()
 XArray::XArray(const std::wstring &init_value)
     : XArray()
 {
-    assign(init_value);
+    _assign(init_value);
 }
 
 XArray::~XArray()
@@ -86,37 +86,77 @@ XArray::~XArray()
 
 size_t XArray::size() const
 {
+    return _size();
+}
+
+size_t XArray::lines() const
+{
+    return _lines();
+}
+
+void XArray::assign(const std::wstring &value)
+{
+    return _assign(value);
+}
+
+void XArray::erase(size_t pos, size_t len)
+{
+    return _erase(pos, len);
+}
+
+std::wstring XArray::getline(size_t x) const
+{
+    return _getline(x);
+}
+
+std::wstring XArray::getline(size_t x, size_t y1, size_t y2) const
+{
+    return _getline(x, y1, y2);
+}
+
+Point XArray::cursor_to_point(size_t c) const
+{
+    return _c2p(c);
+}
+
+size_t XArray::point_to_cursor(Point p) const
+{
+    return _p2c(p);
+}
+
+size_t XArray::_size() const
+{
     return m_stupid_xarray->size();
     //return m_str.size();
 }
 
-size_t XArray::lines() const
+size_t XArray::_lines() const
 {
     return m_stupid_xarray->lines();
     //return count(m_str.begin(), m_str.end(), '\n')  + 1;
 }
 
-void XArray::assign(const std::wstring &str)
+void XArray::_assign(const std::wstring &str)
 {
     m_stupid_xarray->assign(str);
     //m_str = str;
 }
 
 
-void XArray::insert(size_t pos, const std::wstring &value)
+void XArray::_insert(size_t pos, const std::wstring &value)
 {
     m_stupid_xarray->insert(pos, value);
     //m_str.insert(pos, value);
 }
 
 
-void XArray::erase(size_t pos, size_t len)
+void XArray::_erase(size_t pos, size_t len)
 {
     m_stupid_xarray->erase(pos, len);
     //m_str.erase(pos, len);
 }
 
-wstring XArray::getline(size_t x) const
+wstring XArray::_getline(size_t x) const
 {
     return m_stupid_xarray->getline(x);
     /*
@@ -132,7 +172,7 @@ wstring XArray::getline(size_t x) const
     */
 }
 
-wstring XArray::getline(size_t x, size_t y1, size_t y2) const
+wstring XArray::_getline(size_t x, size_t y1, size_t y2) const
 {
     return m_stupid_xarray->getline(x, y1, y2);
     /*
@@ -143,7 +183,7 @@ wstring XArray::getline(size_t x, size_t y1, size_t y2) const
     */
 }
 
-Point XArray::cursor_to_point(size_t c) const
+Point XArray::_c2p(size_t c) const
 {
     return m_stupid_xarray->cursor_to_point(c);
     /*
@@ -159,7 +199,7 @@ Point XArray::cursor_to_point(size_t c) const
     */
 }
 
-size_t XArray::point_to_cursor(Point p) const
+size_t XArray::_p2c(Point p) const
 {
     return m_stupid_xarray->point_to_cursor(p);
     /*
