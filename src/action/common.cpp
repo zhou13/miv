@@ -1,5 +1,6 @@
 #include "action/common.hpp"
 #include "miv/miv.hpp"
+#include "xarray/xarray.hpp"
 #include "frame/frame.hpp"
 
 void FlushAction::perform()
@@ -45,10 +46,16 @@ void LeaveInsertModeAction::perform()
 
 void InsertAfterCursorAction::perform()
 {
+    DEFINE_SCOPE_LOGGER;
+
     auto frame = m_miv->frame();
     XArray *array = frame->array();
     Point cursor = frame->page().origin + frame->cursor();
     array->insertv(cursor, wstring(1, ch));
+
+    mlog->debug("insert {} at ({}, {})", (char)ch, cursor.x, cursor.y);
+
+    CursorMoveRightAction(m_miv).perform();
 }
 
 

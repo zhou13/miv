@@ -121,7 +121,7 @@ void XArray::insert(Point pos, const std::wstring &value)
 
 void XArray::insertv(Point pos, const std::wstring &value)
 {
-    DIE("undefined (TODO)."); // TODO
+    return insert(pos, value);
 }
 
 void XArray::erase(Point pos, num len)
@@ -132,7 +132,7 @@ void XArray::erase(Point pos, num len)
 
 void XArray::erasev(Point pos, num len)
 {
-    DIE("undefined (TODO)."); // TODO
+    return erase(pos, len);
 }
 
 wstring XArray::getline(num x) const
@@ -145,7 +145,7 @@ wstring XArray::getline(num x) const
 
 wstring XArray::getlinev(num x) const
 {
-    DIE("undefined (TODO)."); // TODO
+    return getline(x);
 }
 
 wstring XArray::getline(num x, num y1, num y2) const
@@ -163,7 +163,7 @@ wstring XArray::getline(num x, num y1, num y2) const
 
 wstring XArray::getlinev(num x, num y1, num y2) const
 {
-    DIE("undefined (TODO)."); // TODO
+    return getline(x, y1, y2);
 }
 
 void XArray::setline(num x, const wstring &value)
@@ -174,7 +174,7 @@ void XArray::setline(num x, const wstring &value)
 
 void XArray::setlinev(num x, const wstring &value)
 {
-    DIE("undefined (TODO)."); // TODO
+    return setline(x, value);
 }
 
 void XArray::setline(num x, num y1, num y2, const wstring &value)
@@ -194,7 +194,7 @@ void XArray::setline(num x, num y1, num y2, const wstring &value)
 
 void XArray::setlinev(num x, num y1, num y2, const wstring &value)
 {
-    DIE("undefined (TODO)."); // TODO
+    return setline(x, y1, y2, value);
 }
 
 Point XArray::virtual_to_normal(Point vp) const

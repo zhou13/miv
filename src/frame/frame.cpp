@@ -26,7 +26,8 @@ void Frame::set_mode(Mode mode)
 
 void Frame::set_cursor(Point point)
 {
-    m_cursor = point;
+    DIE("not implemented")
+    // m_cursor = point;
     adjust_cursor();
 }
 
@@ -50,9 +51,6 @@ void Frame::move_cursor(Vector offset)
         absolute_cursor.x += delta;
     }
 
-    //printf("Frame.move_cursor.middle: (%d, %d)\n",
-   //        (int)ncursor.x, (int)ncursor.y);
-
     num line_width = m_array->getline(absolute_cursor.x).length();
     if (absolute_cursor.y >= line_width) {
         num delta = absolute_cursor.y - line_width + 1;
@@ -64,8 +62,6 @@ void Frame::move_cursor(Vector offset)
     }
 
     m_cursor = ncursor;
-    //printf("Frame.move_cursor.end: (%d, %d)\n",
-    //       (int)ncursor.x, (int)ncursor.y);
     adjust_page();
 }
 

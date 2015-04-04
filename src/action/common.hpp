@@ -59,6 +59,7 @@ public:
     InsertAfterCursorAction(Miv *miv, wchar_t ch) : Action(miv), ch(ch) {}
     virtual ~InsertAfterCursorAction() {}
     virtual void perform();
+
 private:
     wchar_t ch;
 };
