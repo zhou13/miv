@@ -20,6 +20,8 @@ typedef ptrdiff_t num;
 const num NUM_MAX = std::numeric_limits<num>::max();
 const num NUM_MIN = std::numeric_limits<num>::min();
 
+using std::max;
+using std::min;
 using std::map;
 using std::set;
 using std::hash;

@@ -2,6 +2,8 @@
 
 #include "utils/common.hpp"
 
+struct SplitListBlock;
+
 class SplitList {
 public:
     SplitList();
@@ -20,5 +22,12 @@ public:
     num find_kth_newline(num k) const;
 
 private:
-    wstring m_str;
+    //wstring m_str;
+    SplitListBlock *m_head;
+    num _size;
+
+    SplitListBlock *_make_list(const wstring &str, num begin, num end);
+    SplitListBlock *_split(SplitListBlock *cur, num pos, SplitListBlock *&tmp);
+    SplitListBlock *_concat(SplitListBlock *cur, SplitListBlock *tmp);
+    SplitListBlock *_try_merge(SplitListBlock *cur);
 };
