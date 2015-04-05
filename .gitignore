@@ -2,3 +2,5 @@
 CMakeLists.txt.user*
 
 build
+html
+latex
