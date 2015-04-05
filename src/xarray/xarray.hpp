@@ -1,4 +1,25 @@
 #pragma once
+/**
+ *
+ * \class XArray
+ * \defgroup XArray
+ * \ingroup XArray
+ *
+ * \brief
+ * Maintain the content of editing file.
+ *
+ * \author $Author: bv $
+ *
+ * \version $Revision: 1.5 $
+ *
+ * \date $Date: 2005/04/14 14:16:20 $
+ *
+ * Contact: bv@bnl.gov
+ *
+ * Created on: Wed Apr 13 18:39:37 2005
+ *
+ *
+ */
 
 #include "utils/utils.hpp"
 #include <string>

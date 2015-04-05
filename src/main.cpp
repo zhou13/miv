@@ -1,3 +1,8 @@
+/**
+ *
+ * Main function
+ *
+ */
 #include <iostream>
 
 #include "utils/utils.hpp"
