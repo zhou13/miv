@@ -1,6 +1,6 @@
 #pragma once
 
-#include "utils/common.hpp"
+#include "utils/utils.hpp"
 #include <string>
 
 class StupidXArray;
@@ -13,26 +13,19 @@ public:
     XArray(const std::wstring &init_value);
 	~XArray();
 
-    void set_wrap(num width);
+    void set_tab_width(num width);
 
     num size() const;
     num lines() const;
 
     void assign(const std::wstring &value);
     void insert(Point pos, const std::wstring &value);
-    void insertv(Point pos, const std::wstring &value);
     void erase(Point pos, num len);
-    void erasev(Point pos, num len);
 
     wstring getline(num x) const;
-    wstring getlinev(num x) const;
     wstring getline(num x, num y1, num y2) const;
-    wstring getlinev(num x, num y1, num y2) const;
-
     void setline(num x, const wstring &value);
-    void setlinev(num x, const wstring &value);
     void setline(num x, num y1, num y2, const wstring &value);
-    void setlinev(num x, num y1, num y2, const wstring &value);
 
     Point virtual_to_normal(Point vp) const;
     Point normal_to_virtual(Point np) const;
@@ -47,7 +40,6 @@ private:
     void _erase(num pos, num len);
     wstring _getline(num x) const;
     wstring _getline(num x, num y1, num y2) const;
-    wstring _setline(num x, const wstring &value) const;
 
     Point _c2p(num c) const;
     num _p2c(Point p) const;

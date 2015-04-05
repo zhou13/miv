@@ -1,6 +1,6 @@
 #pragma once
 
-#include "utils/common.hpp"
+#include "utils/utils.hpp"
 #include "utils/spdlog/spdlog.h"
 
 #include <boost/current_function.hpp>

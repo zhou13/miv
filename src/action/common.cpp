@@ -51,11 +51,10 @@ void InsertAfterCursorAction::perform()
     auto frame = m_miv->frame();
     XArray *array = frame->array();
     Point cursor = frame->page().origin + frame->cursor();
-    array->insertv(cursor, wstring(1, ch));
+    array->insert(cursor, wstring(1, ch)); // TODO
 
     mlog->debug("insert {} at ({}, {})", (char)ch, cursor.x, cursor.y);
 
-    CursorMoveRightAction(m_miv).perform();
 }
 
 

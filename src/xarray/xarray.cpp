@@ -93,9 +93,9 @@ XArray::~XArray()
 {
 }
 
-void XArray::set_wrap(num width)
+void XArray::set_tab_width(num width)
 {
-    mlog->warn("does not support set_wrap now");
+    mlog->warn("does not support now");
 }
 
 num XArray::size() const
@@ -119,20 +119,10 @@ void XArray::insert(Point pos, const std::wstring &value)
     _insert(p, value);
 }
 
-void XArray::insertv(Point pos, const std::wstring &value)
-{
-    return insert(pos, value);
-}
-
 void XArray::erase(Point pos, num len)
 {
     num p = _p2c(pos);
     _erase(p, len);
-}
-
-void XArray::erasev(Point pos, num len)
-{
-    return erase(pos, len);
 }
 
 wstring XArray::getline(num x) const
@@ -141,11 +131,6 @@ wstring XArray::getline(num x) const
         return wstring();
     }
     return _getline(x);
-}
-
-wstring XArray::getlinev(num x) const
-{
-    return getline(x);
 }
 
 wstring XArray::getline(num x, num y1, num y2) const
@@ -161,20 +146,10 @@ wstring XArray::getline(num x, num y1, num y2) const
     return _getline(x, y1, y2);
 }
 
-wstring XArray::getlinev(num x, num y1, num y2) const
-{
-    return getline(x, y1, y2);
-}
-
 void XArray::setline(num x, const wstring &value)
 {
     num len = _line_size(x);
     setline(x, 0, len, value);
-}
-
-void XArray::setlinev(num x, const wstring &value)
-{
-    return setline(x, value);
 }
 
 void XArray::setline(num x, num y1, num y2, const wstring &value)
@@ -190,11 +165,6 @@ void XArray::setline(num x, num y1, num y2, const wstring &value)
     num p = _p2c(Point(x, y1));
     _erase(p, y2 - y1);
     _insert(p, value);
-}
-
-void XArray::setlinev(num x, num y1, num y2, const wstring &value)
-{
-    return setline(x, y1, y2, value);
 }
 
 Point XArray::virtual_to_normal(Point vp) const

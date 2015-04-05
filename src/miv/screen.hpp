@@ -1,6 +1,6 @@
 #pragma once
 
-#include "utils/common.hpp"
+#include "utils/utils.hpp"
 
 enum class CursorShape {
     BLOCK,

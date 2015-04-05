@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "utils/common.hpp"
+#include "utils/utils.hpp"
 #include "ui/ncurses.hpp"
 #include <boost/program_options.hpp>
 
