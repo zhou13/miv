@@ -2,6 +2,13 @@
 
 #include "utils/utils.hpp"
 
+#ifdef DELETE
+#undef DELETE
+#endif
+#ifdef REGISTERED
+#undef REGISTERED
+#endif
+
 enum class Key {
     ESCAPE,
     TAB,

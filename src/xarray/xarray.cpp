@@ -157,8 +157,8 @@ wstring XArray::getline(num x, num y1, num y2) const
     if (x < 0 || x >= _lines()) {
         return wstring();
     }
-    y1 = std::max(y1, (num)0);
-    y2 = std::min(y2, _line_size(x));
+    y1 = max(y1, (num)0);
+    y2 = min(y2, _line_size(x));
     if (y1 > y2) {
         return wstring();
     }
@@ -176,8 +176,8 @@ void XArray::setline(num x, num y1, num y2, const wstring &value)
     if (x < 0 || x >= lines()) {
         DIE("out of bound");
     }
-    y1 = std::max(y1, (num)0);
-    y2 = std::min(y2, _line_size(x));
+    y1 = max(y1, (num)0);
+    y2 = min(y2, _line_size(x));
     if (y1 > y2) {
         DIE("out of bound");
     }

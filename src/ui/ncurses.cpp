@@ -1,6 +1,6 @@
 #include "miv/miv.hpp"
 #include "ui/ncurses.hpp"
-#include <ncurses.h>
+#include <curses.h>
 
 static const int W = 20;
 static const int H = 10;
