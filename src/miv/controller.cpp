@@ -34,20 +34,26 @@ void Controller::init()
                   make_shared<CursorMoveRightAction>(m_miv));
     register_keys(Mode::NORMAL, { KeyCombo("l") },
                   make_shared<FlushAction>(m_miv));
+
     register_keys(Mode::NORMAL, { KeyCombo("i") },
                   make_shared<EnterInsertModeAction>(m_miv));
-    register_keys(Mode::INSERT, { KeyCombo("~") },
+    register_keys(Mode::INSERT, { KeyCombo("Q") },
                   make_shared<LeaveInsertModeAction>(m_miv));
-    register_keys(Mode::NORMAL, { KeyCombo("d"), KeyCombo("d") },
-                  make_shared<EnterInsertModeAction>(m_miv));
 
-    for (char ch = 'a'; ch <= 'z'; ++ch) {
-        auto action = make_shared<InsertAfterCursorAction>(m_miv, (wchar_t)ch);
-        register_keys(Mode::INSERT, { KeyCombo(string(1, ch)) }, action);
-        register_keys(Mode::INSERT, { KeyCombo(string(1, ch)) },
-                      make_shared<CursorMoveRightAction>(m_miv));
-        register_keys(Mode::INSERT, { KeyCombo(string(1, ch)) },
-                      make_shared<FlushAction>(m_miv));
+    register_keys(Mode::NORMAL, { KeyCombo("d"), KeyCombo("d") },
+                  make_shared<DeleteCurrentLineAction>(m_miv));
+    register_keys(Mode::NORMAL, { KeyCombo("d"), KeyCombo("d") },
+                  make_shared<FlushAction>(m_miv));
+
+    for (char ch = (char)1; ch <= (char)120; ++ch) {
+        if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')) {
+            auto action = make_shared<InsertAfterCursorAction>(m_miv, (wchar_t)ch);
+            register_keys(Mode::INSERT, { KeyCombo(string(1, ch)) }, action);
+            register_keys(Mode::INSERT, { KeyCombo(string(1, ch)) },
+                          make_shared<CursorMoveRightAction>(m_miv));
+            register_keys(Mode::INSERT, { KeyCombo(string(1, ch)) },
+                          make_shared<FlushAction>(m_miv));
+        }
     }
 }
 

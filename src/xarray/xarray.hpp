@@ -22,6 +22,7 @@ public:
     void insert(Point pos, const std::wstring &value);
     void erase(Point pos, num len);
 
+    void delete_line(num x);
     wstring getline(num x) const;
     wstring getline(num x, num y1, num y2) const;
     void setline(num x, const wstring &value);

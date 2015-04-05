@@ -49,7 +49,7 @@ set(
     src/miv/screen.hpp
     src/ui/ncurses.cpp
     src/ui/ui.cpp
-    src/utils/common.hpp
+    src/utils/utils.hpp
     src/utils/logger.hpp
     src/xarray/xarray.cpp
     src/xarray/splitlist.cpp

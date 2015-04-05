@@ -37,6 +37,7 @@ void Miv::init()
 void Miv::key_press(KeyCombo key)
 {
     DEFINE_SCOPE_LOGGER;
+    mlog->debug("key={}", key.to_string());
     m_controller->key_press(key);
     for (;;) {
 		auto action = m_controller->pop_next_action();
@@ -60,19 +61,6 @@ void Miv::redraw(Frame *frame) {
     m_currframe->set_size(size);
     m_ui->paint(frame_index(frame), frame->draw());
 }
-/* TODO: delete those
-void Miv::draw(Frame *frame)
-{
-    //std::printf("Miv::draw\n");
-    if (frame == nullptr) {
-        for (auto &fr: m_frames) {
-            draw(fr.get());
-        }
-        return;
-    }
-    m_ui->paint(frame_index(frame), frame->draw());
-}
-*/
 
 Frame *Miv::frame(num id)
 {

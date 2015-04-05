@@ -125,9 +125,27 @@ void XArray::erase(Point pos, num len)
     _erase(p, len);
 }
 
+void XArray::delete_line(num x)
+{
+    assert(x >= 0 && x < _lines());
+    if (_lines() == 1) {
+        _erase(0, _size());
+        return;
+    }
+    num p1 = _p2c(Point(x, 0));
+    num p2 = _p2c(Point(x, _line_size(x) - 1)) + 1;
+    if (x == 0) {
+        ++p2;
+    }
+    else {
+        --p1;
+    }
+    _erase(p1, p2 - p1);
+}
+
 wstring XArray::getline(num x) const
 {
-    if (x < 0 || x >= lines()) {
+    if (x < 0 || x >= _lines()) {
         return wstring();
     }
     return _getline(x);
@@ -135,7 +153,8 @@ wstring XArray::getline(num x) const
 
 wstring XArray::getline(num x, num y1, num y2) const
 {
-    if (x < 0 || x >= lines()) {
+    DEFINE_SCOPE_LOGGER;
+    if (x < 0 || x >= _lines()) {
         return wstring();
     }
     y1 = std::max(y1, (num)0);
@@ -252,6 +271,9 @@ void XArray::_insert(num pos, const std::wstring &value)
     if (pos < 0 || pos > _size()) {
         DIE("out of bound");
     }
+    if (value.size() == 0) {
+        return;
+    }
 #ifdef ___USE_STUPID
     m_stupid_xarray->insert(pos, value);
 #else
@@ -281,7 +303,7 @@ wstring XArray::_getline(num x) const
 #ifdef ___USE_STUPID
     return m_stupid_xarray->getline(x);
 #else
-    if (x < 0 || x >= lines()) {
+    if (x < 0 || x >= _lines()) {
         DIE("out of bound");
     }
     num i = (x == 0 ? 0 : m_split_list->find_kth_newline(x - 1) + 1);
@@ -300,7 +322,7 @@ wstring XArray::_getline(num x, num y1, num y2) const
 #ifdef ___USE_STUPID
     return m_stupid_xarray->getline(x, y1, y2);
 #else
-    if (x < 0 || x >= lines()) {
+    if (x < 0 || x >= _lines()) {
         DIE("out of bound");
     }
     num i = (x == 0 ? 0 : m_split_list->find_kth_newline(x - 1) + 1);
@@ -314,6 +336,9 @@ wstring XArray::_getline(num x, num y1, num y2) const
 
 Point XArray::_c2p(num c) const
 {
+    if (c < 0 || c >= _size()) {
+        DIE("out of bound");
+    }
     //DEFINE_SCOPE_LOGGER;
 #ifdef ___USE_STUPID
     return m_stupid_xarray->cursor_to_point(c);
@@ -331,6 +356,12 @@ Point XArray::_c2p(num c) const
 
 num XArray::_p2c(Point p) const
 {
+    if (p.x < 0 || p.x >= _lines()) {
+        DIE("out of bound");
+    }
+    if (p.y < 0 || p.y > _line_size(p.x)) {
+        DIE("out of bound");
+    }
     //DEFINE_SCOPE_LOGGER;
 #ifdef ___USE_STUPID
     return m_stupid_xarray->point_to_cursor(p);

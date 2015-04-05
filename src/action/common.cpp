@@ -54,7 +54,6 @@ void InsertAfterCursorAction::perform()
     array->insert(cursor, wstring(1, ch)); // TODO
 
     mlog->debug("insert {} at ({}, {})", (char)ch, cursor.x, cursor.y);
-
 }
 
 
@@ -63,4 +62,8 @@ void DeleteCurrentLineAction::perform()
     auto frame = m_miv->frame();
     XArray *array = frame->array();
     num line_number = frame->page().origin.x + frame->cursor().x;
+    array->delete_line(line_number);
+    frame->adjust_cursor();
+
+    mlog->debug("delete line {}", line_number);
 }

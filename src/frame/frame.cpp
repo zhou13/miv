@@ -33,12 +33,17 @@ void Frame::set_cursor(Point point)
 
 void Frame::move_cursor(Vector offset)
 {
-    Vector ncursor = m_cursor + offset;
-    Point absolute_cursor = m_page.origin + ncursor;
+    m_cursor = m_cursor + offset;
 
     //printf("Frame.move_cursor.begin: (%d, %d)\n",
     //       (int)ncursor.x, (int)ncursor.y);
+    adjust_cursor();
+}
 
+void Frame::adjust_cursor()
+{
+    Vector ncursor = m_cursor;
+    Point absolute_cursor = m_page.origin + ncursor;
     num lines = m_array->lines();
     if (absolute_cursor.x >= lines) {
         num delta = absolute_cursor.x - lines + 1;
@@ -127,6 +132,7 @@ vector<ScreenCell> Frame::gutter_sample()
 
 Screen Frame::draw()
 {
+    DEFINE_SCOPE_LOGGER;
     Screen screen;
     screen.cursor = m_cursor;
 

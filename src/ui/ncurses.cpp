@@ -16,7 +16,7 @@ static const int H = 10;
 
 NcursesUI::NcursesUI()
 {
-    DEFINE_SCOPE_LOGGER;
+    //DEFINE_SCOPE_LOGGER;
 
     initscr();
     noecho();
@@ -31,7 +31,7 @@ NcursesUI::NcursesUI()
 
 NcursesUI::~NcursesUI()
 {
-    DEFINE_SCOPE_LOGGER;
+    //DEFINE_SCOPE_LOGGER;
 
     endwin();
 }
@@ -39,13 +39,13 @@ NcursesUI::~NcursesUI()
 
 void NcursesUI::run()
 {
-    DEFINE_SCOPE_LOGGER;
+    //DEFINE_SCOPE_LOGGER;
 
     m_miv->init();
     m_miv->redraw();
     while (1) {
         char ch = getch();
-        if (ch == 'q')
+        if (ch == '`')
             break;
         m_miv->key_press(KeyCombo(string(1, ch)));
     }

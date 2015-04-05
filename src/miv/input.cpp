@@ -450,13 +450,10 @@ map<string, Key> str_to_key = {
     { "pagedown"                         , Key::PAGE_DOWN                 },
     { "pgdown"                           , Key::PAGE_DOWN                 },
     { "shift"                            , Key::SHIFT                     },
-    { "s"                                , Key::SHIFT                     },
     { "control"                          , Key::CONTROL                   },
     { "ctrl"                             , Key::CONTROL                   },
-    { "c"                                , Key::CONTROL                   },
     { "meta"                             , Key::META                      },
     { "alt"                              , Key::ALT                       },
-    { "a"                                , Key::ALT                       },
     { "altgr"                            , Key::ALTGR                     },
     { "capslock"                         , Key::CAPS_LOCK                 },
     { "numlock"                          , Key::NUM_LOCK                  },
@@ -858,6 +855,12 @@ map<string, Key> str_to_key = {
 };
 
 
+static bool is_alphabet(Key key)
+{
+    return key >= Key::A && key <= Key::Z;
+}
+
+
 KeyCombo::KeyCombo(Key key) :
     control(false),
     super(false),
@@ -880,7 +883,8 @@ KeyCombo::KeyCombo(string str) :
     control(false),
     super(false),
     alt(false),
-    shift(false)
+    shift(false),
+    key(Key::UNKNOWN)
 {
     vector<string> key_list;
 
@@ -895,30 +899,43 @@ KeyCombo::KeyCombo(string str) :
             super = false;
             alt = false;
             shift= false;
+            /*
+             * TODO
+             *   Key::UNKNOWN is copied from QT's key list
+             *   we use UNKNOWN for unknown keys
+             *   but is there really a key called "UNKNOWN"?
+             *   can we use UNKNOWN for unknown?
+             *   please figure out what UNKNOWN stands for & fix this issue!
+             */
             key = Key::UNKNOWN;
             return;
         }
 
         switch (result->second) {
         case Key::CONTROL:
-            control = true;
+            control ^= true;
             break;
 
         case Key::SUPER_L:
-            super = true;
+            super ^= true;
             break;
 
         case Key::ALT:
-            alt = true;
+            alt ^= true;
             break;
 
         case Key::SHIFT:
-            shift = true;
+            shift ^= true;
             break;
 
         default:
             key = result->second;
             break;
+        }
+
+        // if it is a uppercase letter
+        if (is_alphabet(key) && lower != k) {
+            shift ^= true;
         }
     }
 
