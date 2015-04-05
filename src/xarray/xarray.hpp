@@ -1,25 +1,21 @@
 #pragma once
-/**
- *
- * \class XArray
- * \defgroup XArray
- * \ingroup XArray
- *
- * \brief
- * Maintain the content of editing file.
- *
- * \author $Author: bv $
- *
- * \version $Revision: 1.5 $
- *
- * \date $Date: 2005/04/14 14:16:20 $
- *
- * Contact: bv@bnl.gov
- *
- * Created on: Wed Apr 13 18:39:37 2005
- *
- *
- */
+
+/*!
+    \defgroup datastruct Data Structure
+    \brief Internal data structure for storaging text.
+*/
+
+/*!
+    \class XArray
+    \ingroup datastruct
+
+    \brief The XArray class maintain the content of editing file.
+    
+    You can use XArray to storage a std::wstring containing
+    normal chars, tabs (whose width can be set), and Unicode chars.
+    
+    \sa SplitList
+*/
 
 #include "utils/utils.hpp"
 #include <string>
@@ -27,10 +23,16 @@
 class StupidXArray;
 class SplitList;
 
-// maintain an array of char: S[0..n-1]
+
 class XArray {
 public:
+    /*!
+        Construct an empty xarray.
+    */
     XArray();
+    /*!
+        Construct a xarray with initial content \a init_value.
+    */
     XArray(const std::wstring &init_value);
 	~XArray();
 

@@ -1,7 +1,21 @@
 #pragma once
+/*!
+    \class SplitList
+    \ingroup datastruct
+
+    \brief The SplitList class provides supports for the XArray class
+        by implementing a split list (functional?!).
+
+    Use SplitList to maintain an array of wchar_t.
+
+    \sa XArray
+*/
 
 #include "utils/utils.hpp"
 
+/*!
+\internal
+*/
 struct SplitListBlock;
 
 class SplitList {
