@@ -56,7 +56,7 @@ void Frame::adjust_cursor()
         absolute_cursor.x += delta;
     }
 
-    num line_width = m_array->getline(absolute_cursor.x).length();
+    num line_width = m_array->line_size(absolute_cursor.x);
     if (absolute_cursor.y >= line_width) {
         num delta = absolute_cursor.y - line_width + 1;
         ncursor.y -= delta;
@@ -155,7 +155,9 @@ Screen Frame::draw()
 
     // second: make text
     for (num x = m_page.x1(); x < m_page.x2(); ++x) {
-        auto line = m_array->getline(x, m_page.y1(), m_page.y2());
+        Point pos(x, m_page.y1());
+        num len = m_page.width();
+        auto line = m_array->get(pos, len);
         vector<ScreenCell> &target = screen.cells[x - m_page.x1()];
         for (auto &ch: line) {
             target.push_back(ScreenCell::make_text(ch));
