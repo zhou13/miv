@@ -22,18 +22,26 @@ public:
     void assign(const wstring &str);
 
     num size() const;
+    wstring get(num begin, num end) const;
+
     num count_newline() const;
     num count_newline(num begin, num end) const;
-    wstring get(num begin, num end) const;
+    /*
+        return -1 if k == -1.
+    */
+    num find_kth_newline(num k) const;
+
+    num width() const;
+    num width(num begin, num end) const;
+    /*
+        find first position j that width(i,j+1)>w
+    */
+    num find_visual_pos(num i, num w) const;
 
     void insert(num pos, const std::wstring &value);
     void erase(num pos, num len);
 
-    // k starting from 0; return size() if not found
-    num find_kth_newline(num k) const;
-
 private:
-    //wstring m_str;
     SplitListBlock *m_head;
     num m_size;
 

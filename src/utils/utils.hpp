@@ -39,7 +39,10 @@ using std::make_unique;
 using std::dynamic_pointer_cast;
 using std::unordered_map;
 
-
+inline uint8_t char_width(wchar_t ch)
+{
+    return 1;
+}
 
 struct Size {
     num height, width;

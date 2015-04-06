@@ -104,6 +104,9 @@ void SplitList::erase(num pos, num len)
 
 num SplitList::find_kth_newline(num k) const
 {
+    if (k == -1) {
+        return -1;
+    }
     num tot = 0, offset = 0;
     for (auto cur = m_head; cur != nullptr; cur = cur->next) {
         if (tot + cur->newline_count > k) {
@@ -119,7 +122,26 @@ num SplitList::find_kth_newline(num k) const
         tot += cur->newline_count;
         offset += cur->size;
     }
-    return size();
+    DIE("cannot found");
+    return -1;
+}
+
+num SplitList::width() const
+{
+    return 0;
+
+}
+
+num SplitList::width(num begin, num end) const
+{
+    return 0;
+
+}
+
+num SplitList::find_visual_pos(num k, num w) const
+{
+    return 0;
+
 }
 
 SplitListBlock *SplitList::_make_list(const wstring &str, num begin, num end)

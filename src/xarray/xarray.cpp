@@ -94,6 +94,10 @@ private:
     The coordinates are row-major: \f$x\f$ is the row index and \f$y\f$ is
         the column index.
 
+    The content is storaged by a SplitList, namely *m_split_list*.
+    For convenience, string would be appended an EOF symbol.
+    Thus the size of xarray is the size of its m_split_list minus one.
+
     There are two ways to locate a char in XArray:
     - by **index**. If you view all chars of the file as an array,
         then one char's index \f$i\f$ is the number of chars before it;
@@ -139,8 +143,6 @@ private:
     \sa SplitList
 */
 
-//#define ___USE_STUPID
-
 /*!
     Construct an empty xarray.
     The text is empty and the tab width is 4 by default.
@@ -150,6 +152,7 @@ XArray::XArray()
     m_stupid_xarray = make_unique<StupidXArray>();
     m_split_list = make_unique<SplitList>();
     m_tab_width = 4;
+    assign(wstring());
 }
 
 /*!
@@ -185,7 +188,7 @@ num XArray::size() const
 #ifdef ___USE_STUPID
     return m_stupid_xarray->size();
 #else
-    num ans = m_split_list->size();
+    num ans = m_split_list->size() - 1;
     if (ans != m_stupid_xarray->size()) {
         DIE("wrong result");
     }
@@ -205,7 +208,7 @@ num XArray::lines() const
 #ifdef ___USE_STUPID
     return m_stupid_xarray->lines();
 #else
-    num ans = m_split_list->count_newline() + 1;
+    num ans = m_split_list->count_newline();
     if (ans != m_stupid_xarray->lines()) {
         DIE("wrong result");
     }
@@ -230,7 +233,7 @@ num XArray::line_size(num x) const
     if (x < 0 || x >= lines()) {
         DIE("out of bound");
     }
-    num i = (x == 0 ? 0 : m_split_list->find_kth_newline(x - 1) + 1);
+    num i = m_split_list->find_kth_newline(x - 1) + 1;
     num j = m_split_list->find_kth_newline(x);
     num ans = j - i;
     if (ans != m_stupid_xarray->line_size(x)) {
@@ -250,8 +253,12 @@ num XArray::line_size(num x) const
 */
 num XArray::line_size_v(num x) const
 {
-    DIE("unfinished");
-    return 0;
+    if (x < 0 || x >= lines()) {
+        DIE("out of bound");
+    }
+    num i = m_split_list->find_kth_newline(x - 1) + 1;
+    num j = m_split_list->find_kth_newline(x);
+    return m_split_list->width(i, j);
 }
 
 XArray::iterator XArray::begin() const
@@ -288,7 +295,7 @@ void XArray::assign(const std::wstring &value)
 #ifdef ___USE_STUPID
     m_stupid_xarray->assign(value);
 #else
-    m_split_list->assign(value);
+    m_split_list->assign(value + (wchar_t)('\n'));
     m_stupid_xarray->assign(value);
 #endif
 }
@@ -392,12 +399,18 @@ wstring XArray::get(iterator first, iterator last) const
 
 Point XArray::visual_to_normal(Point vp) const
 {
-    DIE("undefined (TODO)."); // TODO
+    num i = m_split_list->find_kth_newline(vp.x - 1) + 1;
+    num j = m_split_list->find_visual_pos(i, vp.y);
+    return Point(vp.x, j - i);
 }
 
 Point XArray::normal_to_visual(Point np) const
 {
-    DIE("undefined (TODO)."); // TODO
+    num i = m_split_list->find_kth_newline(np.x - 1) + 1;
+    num j = _p2c(np);
+    num x = np.x;
+    num y = m_split_list->width(i, j);
+    return Point(x, y);
 }
 
 wstring XArray::_get(num x, num y1, num y2) const
