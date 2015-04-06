@@ -65,12 +65,14 @@ void DeleteCurrentLineAction::perform()
     //array->erase_line(line_number, 1);
     XArray::iterator first = array->line_begin(line_number);
     XArray::iterator last = array->line_end(line_number);
+    /*
     if (line_number > 0) {
         --first;
     }
     else if (line_number < array->lines() - 1) {
         ++last;
     }
+    */
     array->erase(first, last);
     frame->adjust_cursor();
 

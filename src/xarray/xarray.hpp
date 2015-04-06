@@ -12,11 +12,13 @@ public:
     class iterator {
     public:
         iterator(const XArray *xarray, Point p) : xa(xarray), p(p) {}
+        bool operator ==(const iterator &it) const { return xa == it.xa && p == it.p; }
+        bool operator !=(const iterator &it) const { return xa != it.xa || p != it.p; }
         iterator &operator ++() { ++p.y; if (p.y > xa->line_size(p.x)) ++p.x, p.y = 0; return *this; }
         iterator &operator --() { --p.y; if (p.y < 0) --p.x, p.y = xa->line_size(p.x); return *this; }
         iterator operator +(num i) const { iterator t = *this; while (i--) ++t; return t; }
         iterator operator -(num i) const { iterator t = *this; while (i--) --t; return t; }
-        num operator -(const iterator &it) const { DIE("undefined (TODO)"); return 0; }
+        num operator -(iterator it) const { num n = 0; while (it != *this) ++it, ++n; return n; }
         wchar_t operator*() const { return (xa->get(p, 1))[0]; }
         Point to_point() const { return p; }
     private:
