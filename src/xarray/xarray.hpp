@@ -9,10 +9,56 @@
     \class XArray
     \ingroup datastruct
 
-    \brief The XArray class maintain the content of editing file.
+    \brief The XArray class maintains the content of editing file.
     
     You can use XArray to storage a std::wstring containing
     normal chars, tabs (whose width can be set), and Unicode chars.
+
+    The indices in XArray are starting from \f$0\f$.
+    The coordinates are row-major: \f$x\f$ is the row index and \f$y\f$ is
+        the column index.
+
+    There are two ways to locate a char in XArray:
+    - by **index**. If you view all chars of the file as an array,
+        then one char's index \f$i\f$ is the number of chars before it;
+        this also means \f$0 \le i < n\f$ where \f$n\f$ is the total 
+        number of chars.
+
+        Note that each char is counted as *one char*, even if it is a
+            newline, a tab, or an Unicode char.
+    - by **real coordinate**. XArray consider '\\n' as the *newline symbol*.
+        If there are \f$k\f$ newline symbols,
+            there would be \f$m = k + 1\f$ *lines*.
+        Obviously \f$1 \le m \le n + 1\f$.
+        The length of the \f$i\f$-th line \f$l_i\f$ is the number of chars
+            in that line; the newline symbols *do not* count,
+            means that \f$l_i\f$ may be \f$0\f$.
+
+        Then, a pair of integers \f$(x,y)\f$ with
+            \f$0 \le x < m, 0 \le y < l_x\f$ is a *real coordinate*,
+            corresponding to
+            the \f$y\f$-th char in the \f$x\f$-th line.
+        Additional, if \f$ x < m-1 \f$, the coordinate \f$(x, l_x)\f$
+            corresponds the newline symbol at the end of that line.
+    - by **visual coordinate**.
+        Each char has a *visual width*.
+        Unicode chars usually have a width of 2.
+        Normal ascii chars usually have a width of 1.
+        A newline has a width of 0.
+        The tab char is quite special:
+        if the tab width is \f$W\f$, then
+        a tab ('\\t') char would have a dynamic width between \f$[1,W]\f$;
+            the width would be determined such that its next char's
+            starting \f$y\f$ coordinate (visual) is a multiple of \f$W\f$.
+
+        We define \f$(x_v,y_v)\f$ for a char.
+        \f$x_v\f$ is simply the row index, namely \f$x\f$
+            defined in real coordinate before.
+        \f$y_v\f$ is the total width of all chars before this char
+            in that line.
+        See that this char occupies visual positions \f$(x_v, [y_v,y_v+w))\f$
+            where \f$w\f$ is its width.
+
     
     \sa SplitList
 */
@@ -22,7 +68,6 @@
 
 class StupidXArray;
 class SplitList;
-
 
 class XArray {
 public:

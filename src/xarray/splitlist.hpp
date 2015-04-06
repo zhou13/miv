@@ -13,9 +13,6 @@
 
 #include "utils/utils.hpp"
 
-/*!
-\internal
-*/
 struct SplitListBlock;
 
 class SplitList {
