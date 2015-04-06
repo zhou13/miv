@@ -45,7 +45,7 @@ void NcursesUI::run()
     m_miv->redraw();
     while (1) {
         char ch = getch();
-        if (ch == '`')
+        if (ch == '~')
             break;
         m_miv->key_press(KeyCombo(string(1, ch)));
     }

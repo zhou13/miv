@@ -69,6 +69,8 @@ public:
                 ++t.y;
             }
         }
+        if (t == p)
+            return (num)m_str.size();
         assert(false);
         return 0;
     }
@@ -376,7 +378,7 @@ void XArray::erase(iterator first, iterator last)
 
 wstring XArray::get(Point pos, num len) const
 {
-    DEFINE_SCOPE_LOGGER;
+    //DEFINE_SCOPE_LOGGER;
 
     if (pos.x < 0 || pos.x >= lines()) {
         return wstring();
@@ -411,6 +413,12 @@ Point XArray::normal_to_visual(Point np) const
     num x = np.x;
     num y = m_split_list->width(i, j);
     return Point(x, y);
+}
+
+void XArray::D_print() const
+{
+    num _; mlog->debug("- lines={}", _ = lines());
+    for (num i = 0; i < _; ++i) mlog->debug(" - line[{}].n={}", i, line_size(i));
 }
 
 wstring XArray::_get(num x, num y1, num y2) const

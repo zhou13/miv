@@ -57,6 +57,10 @@ void Frame::adjust_cursor()
     }
 
     num line_width = m_array->line_size(absolute_cursor.x);
+    if (this->mode() == Mode::INSERT)
+        ++line_width;
+    if (line_width == 0)
+        line_width = 1;
     if (absolute_cursor.y >= line_width) {
         num delta = absolute_cursor.y - line_width + 1;
         ncursor.y -= delta;
@@ -103,6 +107,7 @@ void Frame::adjust_page()
         m_page += Vector(0, m_cursor.y - m_page.width() + 1);
         m_cursor.y = m_page.width() - 1;
     }
+    //mlog->debug("page: {},{} - {},{}",m_page.x1(),m_page.y1(),m_page.x2(),m_page.y2());
 }
 
 
@@ -132,7 +137,7 @@ vector<ScreenCell> Frame::gutter_sample()
 
 Screen Frame::draw()
 {
-    DEFINE_SCOPE_LOGGER;
+    //DEFINE_SCOPE_LOGGER;
     Screen screen;
     screen.cursor = m_cursor;
 

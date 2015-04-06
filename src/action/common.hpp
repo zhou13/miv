@@ -112,3 +112,15 @@ public:
     virtual ~DeleteCurrentLineAction() {}
     virtual void perform();
 };
+
+/*!
+    \class DeleteToLineEndAction
+    \ingroup actions
+    \brief Behavior: delete to the end of current line.
+*/
+class DeleteToLineEndAction : public Action {
+public:
+    DeleteToLineEndAction(Miv *miv) : Action(miv) {}
+    virtual ~DeleteToLineEndAction() {}
+    virtual void perform();
+};

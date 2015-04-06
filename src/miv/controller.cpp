@@ -37,12 +37,17 @@ void Controller::init()
 
     register_keys(Mode::NORMAL, { KeyCombo("i") },
                   make_shared<EnterInsertModeAction>(m_miv));
-    register_keys(Mode::INSERT, { KeyCombo("Q") },
+    register_keys(Mode::INSERT, { KeyCombo("`") },
                   make_shared<LeaveInsertModeAction>(m_miv));
 
     register_keys(Mode::NORMAL, { KeyCombo("d"), KeyCombo("d") },
                   make_shared<DeleteCurrentLineAction>(m_miv));
     register_keys(Mode::NORMAL, { KeyCombo("d"), KeyCombo("d") },
+                  make_shared<FlushAction>(m_miv));
+
+    register_keys(Mode::NORMAL, { KeyCombo("D") },
+                  make_shared<DeleteToLineEndAction>(m_miv));
+    register_keys(Mode::NORMAL, { KeyCombo("D") },
                   make_shared<FlushAction>(m_miv));
 
     for (char ch = (char)1; ch <= (char)120; ++ch) {

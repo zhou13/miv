@@ -49,6 +49,7 @@ public:
     Point visual_to_normal(Point vp) const;
     Point normal_to_visual(Point np) const;
 
+    void D_print() const; // debug usage
 private:
     wstring _get(num x, num y1, num y2) const;
 

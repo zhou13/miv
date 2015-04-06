@@ -36,8 +36,8 @@ void Miv::init()
 
 void Miv::key_press(KeyCombo key)
 {
-    DEFINE_SCOPE_LOGGER;
-    mlog->debug("key={}", key.to_string());
+    //DEFINE_SCOPE_LOGGER;
+    //mlog->debug("key={}", key.to_string());
     m_controller->key_press(key);
     for (;;) {
 		auto action = m_controller->pop_next_action();
@@ -45,6 +45,8 @@ void Miv::key_press(KeyCombo key)
 			break;
 		action->perform();
 	}
+    //mlog->debug("cursor=({},{})", m_currframe->cursor().x,m_currframe->cursor().y);
+    //m_currframe->array()->D_print();
 }
 
 void Miv::redraw(Frame *frame) {
@@ -55,7 +57,7 @@ void Miv::redraw(Frame *frame) {
         return;
     }
 
-    DEFINE_SCOPE_LOGGER;
+    //DEFINE_SCOPE_LOGGER;
     auto size = m_ui->ask_size(frame_index(frame),
                                m_currframe->gutter_sample());
     m_currframe->set_size(size);

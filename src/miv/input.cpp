@@ -939,7 +939,7 @@ KeyCombo::KeyCombo(string str) :
         }
     }
 
-    mlog->debug("KeyCombo \"{}\" is built", to_string());
+    //mlog->debug("KeyCombo \"{}\" is built", to_string());
 }
 
 std::string KeyCombo::to_string()
