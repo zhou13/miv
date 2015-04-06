@@ -16,7 +16,7 @@ public:
         iterator &operator --() { --p.y; if (p.y < 0) --p.x, p.y = xa->line_size(p.x); return *this; }
         iterator operator +(num i) const { iterator t = *this; while (i--) ++t; return t; }
         iterator operator -(num i) const { iterator t = *this; while (i--) --t; return t; }
-        num operator -(const iterator &it) const { DIE("undefined (TODO)"); }
+        num operator -(const iterator &it) const { DIE("undefined (TODO)"); return 0; }
         wchar_t operator*() const { return (xa->get(p, 1))[0]; }
         Point to_point() const { return p; }
     private:
