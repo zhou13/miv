@@ -13,7 +13,7 @@
 
 #include "utils/utils.hpp"
 
-struct SplitListBlock;
+class SplitListBlock;
 
 class SplitList {
 public:

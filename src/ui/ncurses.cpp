@@ -2,8 +2,8 @@
 #include "ui/ncurses.hpp"
 #include <curses.h>
 
-static const int W = 20;
-static const int H = 10;
+static const int W = 16;
+static const int H = 7;
 
 #if 0
 #undef initscr

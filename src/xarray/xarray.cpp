@@ -139,6 +139,8 @@ private:
     \sa SplitList
 */
 
+//#define ___USE_STUPID
+
 /*!
     Construct an empty xarray.
     The text is empty and the tab width is 4 by default.
@@ -179,7 +181,16 @@ void XArray::set_tab_width(num width)
 */
 num XArray::size() const
 {
-    return _size();
+    //DEFINE_SCOPE_LOGGER;
+#ifdef ___USE_STUPID
+    return m_stupid_xarray->size();
+#else
+    num ans = m_split_list->size();
+    if (ans != m_stupid_xarray->size()) {
+        DIE("wrong result");
+    }
+    return ans;
+#endif
 }
 
 /*!
@@ -190,7 +201,16 @@ num XArray::size() const
 */
 num XArray::lines() const
 {
-    return _lines();
+    //DEFINE_SCOPE_LOGGER;
+#ifdef ___USE_STUPID
+    return m_stupid_xarray->lines();
+#else
+    num ans = m_split_list->count_newline() + 1;
+    if (ans != m_stupid_xarray->lines()) {
+        DIE("wrong result");
+    }
+    return ans;
+#endif
 }
 
 /*!
@@ -203,7 +223,21 @@ num XArray::lines() const
 */
 num XArray::line_size(num x) const
 {
-    return _line_size(x);
+    //DEFINE_SCOPE_LOGGER;
+#ifdef ___USE_STUPID
+    return m_stupid_xarray->line_size(x);
+#else
+    if (x < 0 || x >= lines()) {
+        DIE("out of bound");
+    }
+    num i = (x == 0 ? 0 : m_split_list->find_kth_newline(x - 1) + 1);
+    num j = m_split_list->find_kth_newline(x);
+    num ans = j - i;
+    if (ans != m_stupid_xarray->line_size(x)) {
+        DIE("wrong result");
+    }
+    return ans;
+#endif
 }
 
 /*!
@@ -216,7 +250,28 @@ num XArray::line_size(num x) const
 */
 num XArray::line_size_v(num x) const
 {
-    return _line_size_v(x);
+    DIE("unfinished");
+    return 0;
+}
+
+XArray::iterator XArray::begin() const
+{
+    return iterator(this, Point(0, 0));
+}
+
+XArray::iterator XArray::end() const
+{
+    return iterator(this, Point(lines() - 1, line_size(lines() - 1)));
+}
+
+XArray::iterator XArray::line_begin(num x) const
+{
+    return iterator(this, Point(x, 0));
+}
+
+XArray::iterator XArray::line_end(num x) const
+{
+    return iterator(this, Point(x, line_size(x)));
 }
 
 /*!
@@ -229,7 +284,13 @@ num XArray::line_size_v(num x) const
 */
 void XArray::assign(const std::wstring &value)
 {
-    return _assign(value);
+    //DEFINE_SCOPE_LOGGER;
+#ifdef ___USE_STUPID
+    m_stupid_xarray->assign(value);
+#else
+    m_split_list->assign(value);
+    m_stupid_xarray->assign(value);
+#endif
 }
 
 /*!
@@ -245,34 +306,44 @@ void XArray::assign(const std::wstring &value)
 */
 void XArray::insert(Point pos, const wstring &value)
 {
+    //DEFINE_SCOPE_LOGGER;
+    if (value.size() == 0) {
+        return;
+    }
     num p = _p2c(pos);
-    _insert(p, value);
+#ifdef ___USE_STUPID
+    m_stupid_xarray->insert(p, value);
+#else
+    m_split_list->insert(p, value);
+    m_stupid_xarray->insert(p, value);
+#endif
 }
 
-/*!
-    Insert some text before a line.
-    It would create a new line containing \f$value\f$
-    and make it becomes the \f$x\f$-th line.
-    If \f$value\f$ contain newline symbols,
-    this would insert multiple lines.
-
-    Note that if \f$value\f$ is ending with a newline symbol,
-    an empty line would be inserted before the \f$(x+1)\f$-th line
-    (if exists);
-    for example, insert(5, "a\n") would make the 5-th line becomes "a" and
-        6-th lines become empty, where the former 5-th line becomes the 7-th line.
-
-    Time complexity: \f$O(\sqrt{size} + valuesize)\f$.
-    \param[in] x
-    Must have \f$0 \le x \le lines\f$.
-    \f$x = lines\f$ means to insert at the end of the file.
-    \param[in] value
-    Can contain any char: tabs, newlines, etc.
-*/
-void XArray::insert_line(num x, const wstring &value)
+void XArray::insert(iterator p, const wstring &value)
 {
-
+    insert(p.to_point(), value);
 }
+
+///*
+//    Insert some text before a line.
+//    It would create a new line containing \f$value\f$
+//    and make it becomes the \f$x\f$-th line.
+//    If \f$value\f$ contain newline symbols,
+//    this would insert multiple lines.
+//
+//    Note that if \f$value\f$ is ending with a newline symbol,
+//    an empty line would be inserted before the \f$(x+1)\f$-th line
+//    (if exists);
+//    for example, insert(5, "a\n") would make the 5-th line becomes "a" and
+//        6-th lines become empty, where the former 5-th line becomes the 7-th line.
+//
+//    Time complexity: \f$O(\sqrt{size} + valuesize)\f$.
+//    \param[in] x
+//    Must have \f$0 \le x \le lines\f$.
+//    \f$x = lines\f$ means to insert at the end of the file.
+//    \param[in] value
+//    Can contain any char: tabs, newlines, etc.
+//*/
 
 /*!
     Erase.
@@ -280,57 +351,44 @@ void XArray::insert_line(num x, const wstring &value)
 void XArray::erase(Point pos, num len)
 {
     num p = _p2c(pos);
-    _erase(p, len);
+    if (p < 0 || p + len > size()) {
+        DIE("out of bound");
+    }
+#ifdef ___USE_STUPID
+    m_stupid_xarray->erase(p, len);
+#else
+    m_split_list->erase(p, len);
+    m_stupid_xarray->erase(p, len);
+#endif
 }
 
-/*!
-    Erase multiple lines.
-*/
-void XArray::erase_line(num x, num n)
+void XArray::erase(iterator first, iterator last)
 {
-    // TODO: WRONG now: only erase the x-th line
-    assert(x >= 0 && x < _lines());
-    if (_lines() == 1) {
-        _erase(0, _size());
-        return;
-    }
-    num p1 = _p2c(Point(x, 0));
-    num p2 = _p2c(Point(x, _line_size(x) - 1)) + 1;
-    if (x == 0) {
-        ++p2;
-    }
-    else {
-        --p1;
-    }
-    _erase(p1, p2 - p1);
-
-}
-
-wstring XArray::get_line(num x) const
-{
-    if (x < 0 || x >= _lines()) {
-        return wstring();
-    }
-    return _getline(x);
+    erase(first.to_point(), last - first);
 }
 
 wstring XArray::get(Point pos, num len) const
 {
     DEFINE_SCOPE_LOGGER;
 
-    if (pos.x < 0 || pos.x >= _lines()) {
+    if (pos.x < 0 || pos.x >= lines()) {
         return wstring();
     }
-    num n = _line_size(pos.x);
+    num n = line_size(pos.x);
     num y1 = pos.y, y2 = pos.y + len;
     y1 = max(y1, (num)0);
     y2 = min(y2, n);
     if (y1 > y2) {
         return wstring();
     }
-    return _getline(pos.x, y1, y2);
+    return _get(pos.x, y1, y2);
 }
 
+
+wstring XArray::get(iterator first, iterator last) const
+{
+    return get(first.to_point(), last - first);
+}
 
 Point XArray::visual_to_normal(Point vp) const
 {
@@ -342,138 +400,13 @@ Point XArray::normal_to_visual(Point np) const
     DIE("undefined (TODO)."); // TODO
 }
 
-
-/* *************************************************************************
- *
- * The following is core functions of XArray
- *
- * *************************************************************************
- */
-
-//#define ___USE_STUPID
-
-num XArray::_size() const
-{
-    //DEFINE_SCOPE_LOGGER;
-#ifdef ___USE_STUPID
-    return m_stupid_xarray->size();
-#else
-    num ans = m_split_list->size();
-    if (ans != m_stupid_xarray->size()) {
-        DIE("wrong result");
-    }
-    return ans;
-#endif
-}
-
-num XArray::_lines() const
-{
-    //DEFINE_SCOPE_LOGGER;
-#ifdef ___USE_STUPID
-    return m_stupid_xarray->lines();
-#else
-    num ans = m_split_list->count_newline() + 1;
-    if (ans != m_stupid_xarray->lines()) {
-        DIE("wrong result");
-    }
-    return ans;
-#endif
-}
-
-num XArray::_line_size(num x) const
-{
-    //DEFINE_SCOPE_LOGGER;
-#ifdef ___USE_STUPID
-    return m_stupid_xarray->line_size(x);
-#else
-    if (x < 0 || x >= _lines()) {
-        DIE("out of bound");
-    }
-    num i = (x == 0 ? 0 : m_split_list->find_kth_newline(x - 1) + 1);
-    num j = m_split_list->find_kth_newline(x);
-    num ans = j - i;
-    if (ans != m_stupid_xarray->line_size(x)) {
-        DIE("wrong result");
-    }
-    return ans;
-#endif
-}
-
-num XArray::_line_size_v(num x) const
-{
-    DIE("unfinished");
-}
-
-void XArray::_assign(const std::wstring &str)
-{
-    //DEFINE_SCOPE_LOGGER;
-#ifdef ___USE_STUPID
-    m_stupid_xarray->assign(str);
-#else
-    m_split_list->assign(str);
-    m_stupid_xarray->assign(str);
-#endif
-}
-
-
-void XArray::_insert(num pos, const std::wstring &value)
-{
-    //DEFINE_SCOPE_LOGGER;
-    if (pos < 0 || pos > _size()) {
-        DIE("out of bound");
-    }
-    if (value.size() == 0) {
-        return;
-    }
-#ifdef ___USE_STUPID
-    m_stupid_xarray->insert(pos, value);
-#else
-    m_split_list->insert(pos, value);
-    m_stupid_xarray->insert(pos, value);
-#endif
-}
-
-
-void XArray::_erase(num pos, num len)
-{
-    //DEFINE_SCOPE_LOGGER;
-    if (pos < 0 || pos + len > _size()) {
-        DIE("out of bound");
-    }
-#ifdef ___USE_STUPID
-    m_stupid_xarray->erase(pos, len);
-#else
-    m_split_list->erase(pos, len);
-    m_stupid_xarray->erase(pos, len);
-#endif
-}
-
-wstring XArray::_getline(num x) const
-{
-    //DEFINE_SCOPE_LOGGER;
-#ifdef ___USE_STUPID
-    return m_stupid_xarray->getline(x);
-#else
-    if (x < 0 || x >= _lines()) {
-        DIE("out of bound");
-    }
-    num i = (x == 0 ? 0 : m_split_list->find_kth_newline(x - 1) + 1);
-    num j = m_split_list->find_kth_newline(x);
-    wstring ans = m_split_list->get(i, j);
-    if (ans != m_stupid_xarray->getline(x)) { // TODO delete
-        DIE("wrong result");
-    }
-    return ans;
-#endif
-}
-
-wstring XArray::_getline(num x, num y1, num y2) const
+wstring XArray::_get(num x, num y1, num y2) const
 {
     //DEFINE_SCOPE_LOGGER;
 #ifdef ___USE_STUPID
     return m_stupid_xarray->getline(x, y1, y2);
 #else
-    if (x < 0 || x >= _lines()) {
+    if (x < 0 || x >= lines()) {
         DIE("out of bound");
     }
     num i = (x == 0 ? 0 : m_split_list->find_kth_newline(x - 1) + 1);
@@ -487,7 +420,7 @@ wstring XArray::_getline(num x, num y1, num y2) const
 
 Point XArray::_c2p(num c) const
 {
-    if (c < 0 || c >= _size()) {
+    if (c < 0 || c >= size()) {
         DIE("out of bound");
     }
     //DEFINE_SCOPE_LOGGER;
@@ -507,10 +440,10 @@ Point XArray::_c2p(num c) const
 
 num XArray::_p2c(Point p) const
 {
-    if (p.x < 0 || p.x >= _lines()) {
+    if (p.x < 0 || p.x >= lines()) {
         DIE("out of bound");
     }
-    if (p.y < 0 || p.y > _line_size(p.x)) {
+    if (p.y < 0 || p.y > line_size(p.x)) {
         DIE("out of bound");
     }
     //DEFINE_SCOPE_LOGGER;

@@ -2,7 +2,8 @@
 
 static const int BLOCK_SIZE = 5;
 
-struct SplitListBlock {
+class SplitListBlock {
+public:
     wchar_t a[BLOCK_SIZE];
     num size;
     num newline_count;
