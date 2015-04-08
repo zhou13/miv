@@ -13,6 +13,7 @@
 #include <set>
 #include <algorithm>
 #include <unordered_map>
+#include <functional>
 
 #include <boost/program_options/variables_map.hpp>
 

@@ -1,31 +1,73 @@
 #include "xarray/splitlist.hpp"
 
+/*!
+    \class SplitList
+    \ingroup datastruct
+
+    \brief The SplitList class provides supports for the XArray class
+        by implementing a split list (functional?!).
+
+    Use SplitList to maintain an array of wchar_t.
+
+    \sa XArray
+*/
+
 static const int BLOCK_SIZE = 5;
 
 class SplitListBlock {
 public:
     wchar_t a[BLOCK_SIZE];
-    num size;
-    num newline_count;
+    uint8_t w[BLOCK_SIZE];
+    num size, width, newlines;
+    num first_tab;
     SplitListBlock *next;
+    SplitListBlock() : size(0), width(0), newlines(0), first_tab(0) {}
     void update() {
-        newline_count = (num)std::count(a, a + size, '\n');
+        newlines = (num)std::count(a, a + size, '\n');
+        width = (num)std::accumulate(w, w + size, (num)0);
+        num it = (num)(std::find(a, a + size, '\t') - a);
+        num in = (num)(std::find(a, a + size, '\n') - a);
+        first_tab = min(it, in);
+    }
+};
+static struct Iterator {
+    SplitListBlock *cur;
+    num begin, end;
+    Iterator(SplitListBlock *cur, num begin, num end) :
+        cur(cur), begin(begin), end(end) {}
+    bool ok() const {
+        return cur != nullptr;
+    }
+    void go() {
+        begin -= cur->size;
+        end -= cur->size;
+        cur = cur->next;
     }
 };
 
-
+/*!
+    Construct with empty string.
+*/
 SplitList::SplitList()
 {
     m_head = nullptr;
     m_size = 0;
+    m_tab_width = 4;
 }
 
+/*!
+    Free.
+*/
 SplitList::~SplitList()
 {
     if (m_head != nullptr)
         delete m_head;
 }
 
+/*!
+    Free previous data and assign.
+    \param[in] str
+*/
 void SplitList::assign(const wstring &str)
 {
     if (m_head != nullptr)
@@ -34,39 +76,84 @@ void SplitList::assign(const wstring &str)
     m_head = _make_list(str, 0, m_size);
 }
 
+void SplitList::set_tab_width(num width)
+{
+    assert(width > 0);
+    m_tab_width = width;
+    // TODO
+}
+
+/*!
+    \return Guarantee \f$size \ge 0\f$.
+*/
 num SplitList::size() const
 {
     return m_size;
 }
 
+/*!
+    Count newline symbols among the whole string.
+*/
 num SplitList::count_newline() const
 {
     return count_newline(0, size());
 }
 
+/*!
+    \param[in] begin Must have \f$0 \le begin\f$.
+    \param[in] end Must have \f$begin \le end \le size\f$.
+    \return Guarantee \f$count \ge 0\f$.
+*/
 num SplitList::count_newline(num begin, num end) const
 {
     num ans = 0;
-    for (auto cur = m_head; cur != nullptr; cur = cur->next) {
-        if (begin <= 0 && cur->size <= end) {
-            ans += cur->newline_count;
-            goto __L1;
+    for (auto it = Iterator(m_head, begin, end); it.ok(); it.go()) {
+        if (begin <= 0 && it.cur->size <= end) {
+            ans += it.cur->newlines;
+            continue;
         }
-        if (begin >= cur->size)
-            goto __L1;
-        if (end <= 0)
-            goto __L1;
-        {
-        num s = max(begin, (num)0), t = min(end, cur->size);
-        ans += std::count(cur->a + s, cur->a + t, '\n');
-        }
-    __L1:
-        begin -= cur->size;
-        end -= cur->size;
+        num s = max(begin, (num)0), t = min(end, it.cur->size);
+        ans += std::count(it.cur->a + s, it.cur->a + t, '\n');
     }
     return ans;
 }
 
+/*!
+    \param[in] k Must have \f$-1 \le 0 \le num\f$ where \f$num\f$ is the 
+        total number of new lines.
+    \return If \f$k = -1\f$, return 0; if \f$k = num\f$, return \f$size\f$;
+        otherwise return the index of the \f$k\f$-th newline symbol.
+*/
+num SplitList::find_kth_newline(num k) const
+{
+    if (k == -1) {
+        return -1;
+    }
+    num tot = 0, offset = 0;
+    for (auto cur = m_head; cur != nullptr; cur = cur->next) {
+        if (tot + cur->newlines > k) {
+            for (num i = 0; i < cur->size; ++i)
+                if (cur->a[i] == '\n') {
+                    if (tot == k)
+                        return offset + i;
+                    ++tot;
+                }
+            DIE("unexcepted error (not enough newlines in block)");
+            break;
+        }
+        tot += cur->newlines;
+        offset += cur->size;
+    }
+    if (tot == k) {
+        return size();
+    }
+    DIE("cannot found");
+    return -1;
+}
+
+/*!
+    Get.
+*/
 wstring SplitList::get(num begin, num end) const
 {
     wstring ans;
@@ -80,6 +167,9 @@ wstring SplitList::get(num begin, num end) const
     return ans;
 }
 
+/*!
+    Insert before.
+*/
 void SplitList::insert(num pos, const std::wstring &value)
 {
     SplitListBlock *tmp = _make_list(value, 0, (num)value.size());
@@ -91,6 +181,9 @@ void SplitList::insert(num pos, const std::wstring &value)
     m_size += (num)value.size();
 }
 
+/*!
+    Erase.
+*/
 void SplitList::erase(num pos, num len)
 {
     SplitListBlock *tail, *middle;
@@ -102,46 +195,62 @@ void SplitList::erase(num pos, num len)
     m_size -= len;
 }
 
-num SplitList::find_kth_newline(num k) const
-{
-    if (k == -1) {
-        return -1;
-    }
-    num tot = 0, offset = 0;
-    for (auto cur = m_head; cur != nullptr; cur = cur->next) {
-        if (tot + cur->newline_count > k) {
-            for (num i = 0; i < cur->size; ++i)
-                if (cur->a[i] == '\n') {
-                    if (tot == k)
-                        return offset + i;
-                    ++tot;
-                }
-            DIE("unexcepted error (not enough newlines in block)");
-            break;
-        }
-        tot += cur->newline_count;
-        offset += cur->size;
-    }
-    DIE("cannot found");
-    return -1;
-}
-
+/*!
+    Width.
+*/
 num SplitList::width() const
 {
-    return 0;
-
+    return width(0, size());
 }
 
+/*!
+    Width.
+*/
 num SplitList::width(num begin, num end) const
 {
-    return 0;
-
+    num ans = 0;
+    for (auto it = Iterator(m_head, begin, end); it.ok(); it.go()) {
+        if (begin <= 0 && it.cur->size <= end) {
+            ans += it.cur->width;
+            continue;
+        }
+        num s = max(begin, (num)0), t = min(end, it.cur->size);
+        ans += std::accumulate(it.cur->w + s, it.cur->w + t, 0);
+    }
+    return ans;
 }
 
-num SplitList::find_visual_pos(num k, num w) const
+/*!
+    Find first position \f$j\f$ that \f$width(i,j+1)>w\f$.
+*/
+num SplitList::find_visual_pos(num i, num w) const
 {
-    return 0;
-
+    num begin = 0, end;
+    for (auto cur = m_head; cur != nullptr; cur = cur->next) {
+        end = begin + cur->size;
+        if (end <= i)
+            continue;
+        num cur_width = 0;
+        if (i <= begin) {
+            cur_width = cur->width;
+        }
+        else {
+            num x = i - begin, y = cur->size;
+            cur_width = (num)std::accumulate(cur->w + x, cur->w + y, (num)0);
+        }
+        if (w < cur_width) {
+            // inside this block
+            for (num j = i;; ++j) {
+                if (j - begin >= cur->size)
+                    DIE("unexcepted out of bound");
+                w -= cur->w[j - begin];
+                if (w < 0)
+                    return j;
+            }
+        }
+        w -= cur_width;
+    }
+    return size();
 }
 
 SplitListBlock *SplitList::_make_list(const wstring &str, num begin, num end)

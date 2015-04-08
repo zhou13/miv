@@ -175,7 +175,7 @@ XArray::~XArray()
 */
 void XArray::set_tab_width(num width)
 {
-    mlog->warn("does not support now");
+    m_split_list->set_tab_width(width);
 }
 
 /*!
