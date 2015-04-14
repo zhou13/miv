@@ -406,6 +406,7 @@ SplitListBlock *SplitList::_split(SplitListBlock *cur, num pos, SplitListBlock *
 SplitListBlock *SplitList::_concat(SplitListBlock *cur, SplitListBlock *tmp, num cw) const
 {
     if (cur == nullptr) {
+        assert(cw == 0);
         return tmp;
     }
 

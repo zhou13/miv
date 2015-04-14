@@ -9,6 +9,7 @@ public:
     ~SplitList2() {}
     void assign(const wstring &str) { m_str = str; }
     void set_tab_width(num width) { tw = width; }
+    num tab_width() const { return tw; }
     num size() const { return (num)m_str.size(); }
     wstring get(num begin, num end) const { return m_str.substr(begin, end - begin); }
     num count_newline() const { return (num)std::count(m_str.begin(), m_str.end(), '\n'); }
@@ -35,10 +36,9 @@ public:
         for (num i = begin; i < end; ++i) {
             wchar_t ch = m_str[i];
             num w = char_width(ch);
-            if (ch == '\t') {
-                w = tw - cw;
-            }
+            if (ch == '\t') w = tw - cw;
             cw = (cw + w) % tw;
+            if (ch == '\n') cw = 0;
             ans += w;
         }
         return ans;
@@ -60,10 +60,9 @@ public:
         num cw = 0;
         for (auto &ch : m_str) {
             num w = char_width(ch);
-            if (ch == '\t') {
-                w = tw - cw;
-            }
+            if (ch == '\t') w = tw - cw;
             cw = (cw + w) % tw;
+            if (ch == '\n') cw = 0;
             ans.push_back(make_pair(ch, w));
         }
         return ans;
@@ -81,7 +80,7 @@ SplitListTester::SplitListTester()
     config("N0", 10);
     config("N_insert", 2);
     config("N_erase", 2);
-    config("operations", 1000);
+    config("operations", 100000);
     std::cout << "SplitListTester created" << std::endl;
 }
 
@@ -164,26 +163,31 @@ void SplitListTester::run()
         switch (random(gen, 3)) {
         case 0: // modification
             if (random(gen, 100) == 0) { // assign
+                std::cout << "(assign) ";
                 wstring s0 = rand_seq(gen, n0 + random(gen, n0));
                 obj->assign(s0);
                 ref->assign(s0);
             }
             else if (random(gen, 20) == 0) { // set tab width
+                std::cout << "(set_tw) ";
                 num w = 1 + random(gen, 20);
                 obj->set_tab_width(w);
                 ref->set_tab_width(w);
             }
             else if (random(gen, 2) == 0) { // insert
+                std::cout << "(insert) ";
                 num n1 = get_setting("N_insert");
                 wstring s = rand_seq(gen, 1 + random(gen, n1));
                 num pos = random(gen, n + 1);
                 obj->insert(pos, s);
                 ref->insert(pos, s);
             }
-            else { // erase
+            else if (n > 0) { // erase
+                std::cout << "(erase) ";
                 num n1 = get_setting("N_erase");
                 num len = random(gen, min(n, n1)) + 1;
                 num pos = random(gen, n - len + 1);
+                std::cout << "pos=" << pos << " len=" << len << " ";
                 obj->erase(pos, pos + len);
                 ref->erase(pos, pos + len);
             }
@@ -193,6 +197,7 @@ void SplitListTester::run()
             break;
 
         case 2: // test
+            std::cout << "(!test) ";
             string test_result = obj->D_test();
             if (test_result != "") {
                 bad("@D_test " + test_result);
@@ -201,10 +206,11 @@ void SplitListTester::run()
                 std::stringstream sout;
                 auto dump_obj = obj->D_dump();
                 auto dump_ref = ref->D_dump();
-                sout << "obj: "; for (auto x : dump_obj) sout << p_ch(x.first); sout << std::endl;
-                sout << "ref: "; for (auto x : dump_ref) sout << p_ch(x.first); sout << std::endl;
-                sout << "obj_w: "; for (auto x : dump_obj) sout << x.second << " "; sout << std::endl;
-                sout << "ref_w: "; for (auto x : dump_ref) sout << x.second << " "; sout << std::endl;
+                sout << "  tab_width: " << ref->tab_width() << std::endl;
+                sout << "  obj: "; for (auto x : dump_obj) sout << p_ch(x.first); sout << std::endl;
+                sout << "  ref: "; for (auto x : dump_ref) sout << p_ch(x.first); sout << std::endl;
+                sout << "  obj_w: "; for (auto x : dump_obj) sout << x.second << " "; sout << std::endl;
+                sout << "  ref_w: "; for (auto x : dump_ref) sout << x.second << " "; sout << std::endl;
                 /*
                 sout << "ref: ";
                 for (auto x : dump_ref)
@@ -213,9 +219,10 @@ void SplitListTester::run()
                 */
                 bad("@D_dump", sout.str());
             }
+            std::cout << "ok | tw=" << ref->tab_width() << " n=" << n;
             break;
         }
-        std::cout << "ok" << std::endl;
+        std::cout << std::endl;
     }
     //std::cout << rand_seq(gen, 10) << std::endl;
     //std::cout << rand_seq(gen, 10) << std::endl;

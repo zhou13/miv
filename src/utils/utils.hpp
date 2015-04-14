@@ -42,6 +42,14 @@ using std::unordered_map;
 
 inline uint8_t char_width(wchar_t ch)
 {
+    if (ch == '\n')
+        return 0;
+    if (ch >= 'a' && ch <= 'k')
+        return 2;
+    if (ch >= 'P' && ch <= 'U')
+        return 3;
+    if (ch >= 'n' && ch <= 'o')
+        return 5;
     return 1;
 }
 
