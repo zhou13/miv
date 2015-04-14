@@ -366,7 +366,7 @@ void XArray::erase(Point pos, num len)
 #ifdef ___USE_STUPID
     m_stupid_xarray->erase(p, len);
 #else
-    m_split_list->erase(p, len);
+    m_split_list->erase(p, p + len);
     m_stupid_xarray->erase(p, len);
 #endif
 }

@@ -18,30 +18,25 @@ class SplitListBlock {
 public:
     wchar_t a[BLOCK_SIZE];
     uint8_t w[BLOCK_SIZE];
-    num size, width, newlines;
-    num first_tab;
+    num size, width, n_newline, n_tab, cw;
     SplitListBlock *next;
-    SplitListBlock() : size(0), width(0), newlines(0), first_tab(0) {}
+
+    SplitListBlock() : size(0), width(0), n_newline(0), n_tab(0), cw(0) {}
+    ~SplitListBlock() {
+        if (next != nullptr)
+            delete next;
+    }
     void update() {
-        newlines = (num)std::count(a, a + size, '\n');
         width = (num)std::accumulate(w, w + size, (num)0);
-        num it = (num)(std::find(a, a + size, '\t') - a);
-        num in = (num)(std::find(a, a + size, '\n') - a);
-        first_tab = min(it, in);
-    }
-};
-static struct Iterator {
-    SplitListBlock *cur;
-    num begin, end;
-    Iterator(SplitListBlock *cur, num begin, num end) :
-        cur(cur), begin(begin), end(end) {}
-    bool ok() const {
-        return cur != nullptr;
-    }
-    void go() {
-        begin -= cur->size;
-        end -= cur->size;
-        cur = cur->next;
+        n_newline = (num)std::count(a, a + size, '\n');
+        n_tab = (num)std::count(a, a + size, '\t');
+        if (n_newline == 0)
+            cw = width;
+        else {
+            num i = size - 1;
+            while (a[i] != '\n') --i;
+            cw = (num)std::accumulate(w + i + 1, w + size, (num)0);
+        }
     }
 };
 
@@ -73,14 +68,14 @@ void SplitList::assign(const wstring &str)
     if (m_head != nullptr)
         delete m_head;
     m_size = (num)str.size();
-    m_head = _make_list(str, 0, m_size);
+    m_head = _make_list(str, 0, m_size, 0);
 }
 
 void SplitList::set_tab_width(num width)
 {
     assert(width > 0);
     m_tab_width = width;
-    // TODO
+    m_head = _resize_tabs(m_head, 0);
 }
 
 /*!
@@ -107,13 +102,18 @@ num SplitList::count_newline() const
 num SplitList::count_newline(num begin, num end) const
 {
     num ans = 0;
-    for (auto it = Iterator(m_head, begin, end); it.ok(); it.go()) {
-        if (begin <= 0 && it.cur->size <= end) {
-            ans += it.cur->newlines;
+    num le = 0, ri = 0;
+    for (auto cur = m_head; cur != nullptr; cur = cur->next) {
+        le = ri, ri += cur->size;
+        if (begin <= le && ri <= end) {
+            ans += cur->n_newline;
             continue;
         }
-        num s = max(begin, (num)0), t = min(end, it.cur->size);
-        ans += std::count(it.cur->a + s, it.cur->a + t, '\n');
+        num s = max(begin, le) - le;
+        num t = min(end, ri) - le;
+        if (s < t) {
+            ans += (num)std::count(cur->a + s, cur->a + t, '\n');
+        }
     }
     return ans;
 }
@@ -131,7 +131,7 @@ num SplitList::find_kth_newline(num k) const
     }
     num tot = 0, offset = 0;
     for (auto cur = m_head; cur != nullptr; cur = cur->next) {
-        if (tot + cur->newlines > k) {
+        if (tot + cur->n_newline > k) {
             for (num i = 0; i < cur->size; ++i)
                 if (cur->a[i] == '\n') {
                     if (tot == k)
@@ -141,7 +141,7 @@ num SplitList::find_kth_newline(num k) const
             DIE("unexcepted error (not enough newlines in block)");
             break;
         }
-        tot += cur->newlines;
+        tot += cur->n_newline;
         offset += cur->size;
     }
     if (tot == k) {
@@ -172,11 +172,11 @@ wstring SplitList::get(num begin, num end) const
 */
 void SplitList::insert(num pos, const std::wstring &value)
 {
-    SplitListBlock *tmp = _make_list(value, 0, (num)value.size());
+    SplitListBlock *tmp = _make_list(value, 0, (num)value.size(), 0);
     SplitListBlock *tail;
     m_head = _split(m_head, pos, tail);
-    m_head = _concat(m_head, tmp);
-    m_head = _concat(m_head, tail);
+    m_head = _concat(m_head, tmp, 0);
+    m_head = _concat(m_head, tail, 0);
 
     m_size += (num)value.size();
 }
@@ -184,15 +184,15 @@ void SplitList::insert(num pos, const std::wstring &value)
 /*!
     Erase.
 */
-void SplitList::erase(num pos, num len)
+void SplitList::erase(num begin, num end)
 {
     SplitListBlock *tail, *middle;
-    m_head = _split(m_head, pos + len, tail);
-    m_head = _split(m_head, pos, middle);
-    m_head = _concat(m_head, tail);
+    m_head = _split(m_head, end, tail);
+    m_head = _split(m_head, begin, middle);
+    m_head = _concat(m_head, tail, 0);
     delete middle;
 
-    m_size -= len;
+    m_size -= end - begin;
 }
 
 /*!
@@ -209,13 +209,18 @@ num SplitList::width() const
 num SplitList::width(num begin, num end) const
 {
     num ans = 0;
-    for (auto it = Iterator(m_head, begin, end); it.ok(); it.go()) {
-        if (begin <= 0 && it.cur->size <= end) {
-            ans += it.cur->width;
+    num le = 0, ri = 0;
+    for (auto cur = m_head; cur != nullptr; cur = cur->next) {
+        le = ri, ri += cur->size;
+        if (begin <= le && ri <= end) {
+            ans += cur->width;
             continue;
         }
-        num s = max(begin, (num)0), t = min(end, it.cur->size);
-        ans += std::accumulate(it.cur->w + s, it.cur->w + t, 0);
+        num s = max(begin, le) - le;
+        num t = min(end, le) - le;
+        if (s < t) {
+            ans += std::accumulate(cur->w + s, cur->w + t, 0);
+        }
     }
     return ans;
 }
@@ -253,17 +258,81 @@ num SplitList::find_visual_pos(num i, num w) const
     return size();
 }
 
-SplitListBlock *SplitList::_make_list(const wstring &str, num begin, num end)
+SplitListBlock * SplitList::_resize_tabs(SplitListBlock *cur, num cw)
+{
+    if (cur == nullptr)
+        return nullptr;
+    bool changed = false;
+    for (num i = 0; i < cur->size; ++i) {
+        if (cur->a[i] == '\t') {
+            cur->w[i] = m_tab_width - cw;
+            changed = true;
+        }
+        if (cur->a[i] == '\n') {
+            cw = 0;
+        }
+        else {
+            cw = (cw + cur->w[i]) % m_tab_width;
+        }
+    }
+    if (changed)
+        cur->update();
+    cur->next = _resize_tabs(cur->next, cw);
+    return cur;
+}
+
+SplitListBlock * SplitList::_resize_single_tab(SplitListBlock *cur, num cw)
+{
+    if (cur == nullptr)
+        return nullptr;
+
+    if (cur->n_tab > 0) {
+        num i = 0;
+        while (cur->a[i] != '\t' && cur->a[i] != '\n') {
+            cw = (cw + cur->w[i]) % m_tab_width;
+            ++i;
+        }
+        if (cur->a[i] == '\t') {
+            cur->w[i] = m_tab_width - cw;
+            cur->update();
+        }
+        return cur;
+    }
+    else {
+        if (cur->n_newline > 0)
+            return cur;
+        cw = (cw + cur->width) % m_tab_width;
+        cur->next = _resize_single_tab(cur->next, cw);
+        return cur;
+    }
+}
+
+SplitListBlock *SplitList::_make_list(const wstring &str, num begin, num end, num cw)
 {
     if (begin >= end)
         return nullptr;
     num p = min(begin + BLOCK_SIZE, end);
     SplitListBlock *cur = new SplitListBlock();
 
-    cur->next = _make_list(str, p, end);
     cur->size = p - begin;
     std::copy(str.begin() + begin, str.begin() + p, cur->a);
+    for (num i = 0; i < cur->size; ++i) {
+        if (cur->a[i] == '\t') {
+            cur->w[i] = m_tab_width - cw;
+        } 
+        else {
+            cur->w[i] = char_width(cur->a[i]);
+        }
+        if (cur->a[i] == '\n') {
+            cw = 0;
+        }
+        else {
+            cw = (cw + cur->w[i]) % m_tab_width;
+        }
+    }
     cur->update();
+
+    cur->next = _make_list(str, p, end, cw);
     return cur;
 }
 
@@ -282,6 +351,8 @@ SplitListBlock *SplitList::_split(SplitListBlock *cur, num pos, SplitListBlock *
         tmp->update();
         _try_merge(tmp);
 
+        tmp = _resize_single_tab(tmp, 0);
+
         cur->next = nullptr;
         cur->size = pos;
         cur->update();
@@ -291,17 +362,27 @@ SplitListBlock *SplitList::_split(SplitListBlock *cur, num pos, SplitListBlock *
     return cur;
 }
 
-SplitListBlock *SplitList::_concat(SplitListBlock *cur, SplitListBlock *tmp)
+SplitListBlock *SplitList::_concat(SplitListBlock *cur, SplitListBlock *tmp, num cw)
 {
     if (cur == nullptr) {
         return tmp;
     }
+
+    if (cur->n_newline == 0) {
+        cw = (cw + cur->width) % m_tab_width;
+    }
+    else {
+        cw = cur->cw % m_tab_width;
+    }
+
     if (cur->next == nullptr) {
+        _resize_single_tab(tmp, cw);
         cur->next = tmp;
         cur = _try_merge(cur);
-        return cur;
     }
-    cur->next = _concat(cur->next, tmp);
+    else {
+        cur->next = _concat(cur->next, tmp, cw);
+    }
     return cur;
 }
 
@@ -311,12 +392,15 @@ SplitListBlock *SplitList::_try_merge(SplitListBlock *cur)
         return cur;
     if (cur->size + cur->next->size > BLOCK_SIZE)
         return cur;
-    auto *tmp = cur->next;
+    auto tmp = cur->next;
     std::copy(tmp->a, tmp->a + tmp->size, cur->a + cur->size);
     cur->size += tmp->size;
     cur->next = tmp->next;
     cur->update();
+
+    tmp->next = nullptr;
     delete tmp;
+
     return cur;
 }
 

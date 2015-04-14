@@ -23,15 +23,17 @@ public:
     num find_visual_pos(num i, num w) const;
 
     void insert(num pos, const std::wstring &value);
-    void erase(num pos, num len);
+    void erase(num pos, num end);
 
 private:
     SplitListBlock *m_head;
     num m_size;
     num m_tab_width;
 
-    static SplitListBlock *_make_list(const wstring &str, num begin, num end);
-    static SplitListBlock *_split(SplitListBlock *cur, num pos, SplitListBlock *&tmp);
-    static SplitListBlock *_concat(SplitListBlock *cur, SplitListBlock *tmp);
-    static SplitListBlock *_try_merge(SplitListBlock *cur);
+    SplitListBlock *_resize_tabs(SplitListBlock *cur, num cw);
+    SplitListBlock *_resize_single_tab(SplitListBlock *cur, num cw);
+    SplitListBlock *_make_list(const wstring &str, num begin, num end, num cw);
+    SplitListBlock *_split(SplitListBlock *cur, num pos, SplitListBlock *&tmp);
+    SplitListBlock *_concat(SplitListBlock *cur, SplitListBlock *tmp, num cw);
+    SplitListBlock *_try_merge(SplitListBlock *cur);
 };
