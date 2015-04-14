@@ -22,18 +22,21 @@ public:
     num width(num begin, num end) const;
     num find_visual_pos(num i, num w) const;
 
-    void insert(num pos, const std::wstring &value);
-    void erase(num pos, num end);
+    void insert(num pos, const wstring &value);
+    void erase(num begin, num end);
+
+    vector<pair<wchar_t, num>> D_dump() const;
+    string D_test() const;
 
 private:
     SplitListBlock *m_head;
     num m_size;
     num m_tab_width;
 
-    SplitListBlock *_resize_tabs(SplitListBlock *cur, num cw);
-    SplitListBlock *_resize_single_tab(SplitListBlock *cur, num cw);
-    SplitListBlock *_make_list(const wstring &str, num begin, num end, num cw);
-    SplitListBlock *_split(SplitListBlock *cur, num pos, SplitListBlock *&tmp);
-    SplitListBlock *_concat(SplitListBlock *cur, SplitListBlock *tmp, num cw);
-    SplitListBlock *_try_merge(SplitListBlock *cur);
+    SplitListBlock *_resize_tabs(SplitListBlock *cur, num cw) const;
+    SplitListBlock *_resize_single_tab(SplitListBlock *cur, num cw) const;
+    SplitListBlock *_make_list(const wstring &str, num begin, num end, num cw) const;
+    SplitListBlock *_split(SplitListBlock *cur, num pos, SplitListBlock *&tmp) const;
+    SplitListBlock *_concat(SplitListBlock *cur, SplitListBlock *tmp, num cw) const;
+    SplitListBlock *_try_merge(SplitListBlock *cur) const;
 };

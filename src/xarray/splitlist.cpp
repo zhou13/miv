@@ -195,6 +195,46 @@ void SplitList::erase(num begin, num end)
     m_size -= end - begin;
 }
 
+vector<pair<wchar_t, num>> SplitList::D_dump() const
+{
+    vector<pair<wchar_t, num>> ans;
+    for (auto cur = m_head; cur != nullptr; cur = cur->next) {
+        for (num i = 0; i < cur->size; ++i) {
+            ans.push_back(make_pair(cur->a[i], cur->w[i]));
+        }
+    }
+    return ans;
+}
+
+string SplitList::D_test() const
+{
+    for (auto cur = m_head; cur != nullptr; cur = cur->next) {
+        if (cur->size <= 0)
+            return string("invalid size (<0)");
+        if (cur->size > BLOCK_SIZE)
+            return string("invalid size (>BLOCK_SIZE)");
+        num w = 0, n = 0, t = 0, cw = 0;
+        for (num i = 0; i < cur->size; ++i) {
+            w += cur->w[i];
+            if (cur->a[i] == '\n') ++n;
+            if (cur->a[i] == '\t') ++t;
+            if (cur->a[i] == '\n')
+                cw = 0;
+            else
+                cw += cur->w[i];
+        }
+        if (w != cur->width)
+            return string("wrong width");
+        if (n != cur->n_newline)
+            return string("wrong newline count");
+        if (t != cur->n_tab)
+            return string("wrong tab count");
+        if (cw != cur->cw)
+            return string("wrong cw (width after last newline)");
+    }
+    return string("");
+}
+
 /*!
     Width.
 */
@@ -258,7 +298,7 @@ num SplitList::find_visual_pos(num i, num w) const
     return size();
 }
 
-SplitListBlock * SplitList::_resize_tabs(SplitListBlock *cur, num cw)
+SplitListBlock * SplitList::_resize_tabs(SplitListBlock *cur, num cw) const
 {
     if (cur == nullptr)
         return nullptr;
@@ -281,7 +321,7 @@ SplitListBlock * SplitList::_resize_tabs(SplitListBlock *cur, num cw)
     return cur;
 }
 
-SplitListBlock * SplitList::_resize_single_tab(SplitListBlock *cur, num cw)
+SplitListBlock * SplitList::_resize_single_tab(SplitListBlock *cur, num cw) const
 {
     if (cur == nullptr)
         return nullptr;
@@ -307,7 +347,7 @@ SplitListBlock * SplitList::_resize_single_tab(SplitListBlock *cur, num cw)
     }
 }
 
-SplitListBlock *SplitList::_make_list(const wstring &str, num begin, num end, num cw)
+SplitListBlock *SplitList::_make_list(const wstring &str, num begin, num end, num cw) const
 {
     if (begin >= end)
         return nullptr;
@@ -336,7 +376,7 @@ SplitListBlock *SplitList::_make_list(const wstring &str, num begin, num end, nu
     return cur;
 }
 
-SplitListBlock *SplitList::_split(SplitListBlock *cur, num pos, SplitListBlock *&tmp)
+SplitListBlock *SplitList::_split(SplitListBlock *cur, num pos, SplitListBlock *&tmp) const
 {
     if (pos == 0) {
         tmp = cur;
@@ -348,6 +388,7 @@ SplitListBlock *SplitList::_split(SplitListBlock *cur, num pos, SplitListBlock *
         tmp->next = cur->next;
         tmp->size = cur->size - pos;
         std::copy(cur->a + pos, cur->a + cur->size, tmp->a);
+        std::copy(cur->w + pos, cur->w + cur->size, tmp->w);
         tmp->update();
         _try_merge(tmp);
 
@@ -362,7 +403,7 @@ SplitListBlock *SplitList::_split(SplitListBlock *cur, num pos, SplitListBlock *
     return cur;
 }
 
-SplitListBlock *SplitList::_concat(SplitListBlock *cur, SplitListBlock *tmp, num cw)
+SplitListBlock *SplitList::_concat(SplitListBlock *cur, SplitListBlock *tmp, num cw) const
 {
     if (cur == nullptr) {
         return tmp;
@@ -386,7 +427,7 @@ SplitListBlock *SplitList::_concat(SplitListBlock *cur, SplitListBlock *tmp, num
     return cur;
 }
 
-SplitListBlock *SplitList::_try_merge(SplitListBlock *cur)
+SplitListBlock *SplitList::_try_merge(SplitListBlock *cur) const
 {
     if (cur->next == nullptr)
         return cur;
@@ -394,6 +435,7 @@ SplitListBlock *SplitList::_try_merge(SplitListBlock *cur)
         return cur;
     auto tmp = cur->next;
     std::copy(tmp->a, tmp->a + tmp->size, cur->a + cur->size);
+    std::copy(tmp->w, tmp->w + tmp->size, cur->w + cur->size);
     cur->size += tmp->size;
     cur->next = tmp->next;
     cur->update();
