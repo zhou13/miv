@@ -27,6 +27,7 @@ public:
 
     vector<pair<wchar_t, num>> D_dump() const;
     string D_test() const;
+    bool D_check_w(SplitListBlock *cur, num cw) const;
 
 private:
     SplitListBlock *m_head;

@@ -33,13 +33,14 @@ public:
     num width() const { return width(0, size()); }
     num width(num begin, num end) const {
         num cw = 0, ans = 0;
-        for (num i = begin; i < end; ++i) {
+        for (num i = 0; i < end; ++i) {
             wchar_t ch = m_str[i];
             num w = char_width(ch);
             if (ch == '\t') w = tw - cw;
             cw = (cw + w) % tw;
             if (ch == '\n') cw = 0;
-            ans += w;
+            if (i >= begin)
+                ans += w;
         }
         return ans;
     }
@@ -156,6 +157,7 @@ void SplitListTester::run()
     ref->assign(s0);
 
     num operations = get_setting("operations");
+    num opt;
     for (num cur = 0; cur < operations; ++cur) {
         std::cout << "Op #" << cur + 1 << ": ";
         num n = ref->size();
@@ -194,29 +196,95 @@ void SplitListTester::run()
             break;
 
         case 1: // query
+            std::cout << "(!query) ";
+            if (ref->size() != obj->size()) {
+                bad("@size");
+            }
+            opt = random(gen, 5);
+            if (opt == 0 && n > 0) { // get
+                std::cout << "(get) ";
+                num begin = random(gen, n), end = random(gen, n - begin + 1) + begin;
+                if (obj->get(begin, end) != ref->get(begin, end))
+                    bad("@get(x, x)");
+            }
+            else if (opt == 1) { // count_newline
+                std::cout << "(count_newline) ";
+                if (random(gen, n + 1) == 0) {
+                    if (obj->count_newline() != ref->count_newline())
+                        bad("@count_newline()");
+                }
+                else {
+                    num begin = random(gen, n), end = random(gen, n - begin + 1) + begin;
+                    if (obj->count_newline(begin, end) != ref->count_newline(begin, end))
+                        bad("@count_newline(x, x)");
+                }
+            }
+            else if (opt == 2) { // find_kth_newline
+                std::cout << "(find_kth_newline) ";
+                if (obj->count_newline() != ref->count_newline())
+                    bad("@count_newline()");
+                num tot = ref->count_newline();
+                num k = random(gen, tot + 2) - 1;
+                if (obj->find_kth_newline(k) != ref->find_kth_newline(k))
+                    bad("@find_kth_newline(x)");
+            }
+            else if (opt == 3) { // width
+                std::cout << "(width) ";
+                if (random(gen, n + 1) == 0) {
+                    if (obj->width() != ref->width())
+                        bad("@width()");
+                }
+                else {
+                    num begin = random(gen, n), end = random(gen, n - begin + 1) + begin;
+                    if (obj->width(begin, end) != ref->width(begin, end)) {
+                        std::stringstream sout;
+                        sout << "  n=" << n << " begin=" << begin << " end=" << end << std::endl;
+                        sout << "  obj: " << obj->width(begin, end) << std::endl;
+                        sout << "  ref: " << ref->width(begin, end) << std::endl;
+                        dump_all(sout);
+                        bad("@width(x, x)", sout.str());
+                    }
+                }
+            }
+            else if (n > 0) { // find_visual_pos
+                std::cout << "(find_visual_pos) ";
+                num i = random(gen, n), j = random(gen, n - i) + i;
+                if (obj->width(i, j + 1) != ref->width(i, j + 1)) {
+                    std::stringstream sout;
+                    sout << "  n=" << n << " i=" << i << " j=" << j << std::endl;
+                    sout << "  obj: " << obj->width(i, j + 1) << std::endl;
+                    sout << "  ref: " << ref->width(i, j + 1) << std::endl;
+                    dump_all(sout);
+                    bad("@width(x, x)", sout.str());
+                }
+                num w1 = ref->width(i, j), w2 = ref->width(i, j + 1);
+                if (w1 == w2) ++w2;
+                num w = random(gen, w2 - w1) + w1;
+                num ret1 = obj->find_visual_pos(i, w);
+                num ret2 = ref->find_visual_pos(i, w);
+                if (ret1 != ret2) {
+                    std::stringstream sout;
+                    sout << "  n=" << n << " i=" << i << " w=" << w << std::endl;
+                    sout << "  obj: " << obj->find_visual_pos(i, w) << std::endl;
+                    sout << "  ref: " << ref->find_visual_pos(i, w) << std::endl;
+                    dump_all(sout);
+                    bad("@find_visual_pos(x, x)", sout.str());
+                }
+            }
+            std::cout << "ok | tw=" << ref->tab_width() << " n=" << n;
             break;
 
         case 2: // test
             std::cout << "(!test) ";
             string test_result = obj->D_test();
             if (test_result != "") {
-                bad("@D_test " + test_result);
+                std::stringstream sout;
+                dump_all(sout);
+                bad("@D_test " + test_result, sout.str());
             }
             if (obj->D_dump() != ref->D_dump()) {
                 std::stringstream sout;
-                auto dump_obj = obj->D_dump();
-                auto dump_ref = ref->D_dump();
-                sout << "  tab_width: " << ref->tab_width() << std::endl;
-                sout << "  obj: "; for (auto x : dump_obj) sout << p_ch(x.first); sout << std::endl;
-                sout << "  ref: "; for (auto x : dump_ref) sout << p_ch(x.first); sout << std::endl;
-                sout << "  obj_w: "; for (auto x : dump_obj) sout << x.second << " "; sout << std::endl;
-                sout << "  ref_w: "; for (auto x : dump_ref) sout << x.second << " "; sout << std::endl;
-                /*
-                sout << "ref: ";
-                for (auto x : dump_ref)
-                    sout << "(" << (char)x.first << ", " << x.second << ") ";
-                sout << std::endl;
-                */
+                dump_all(sout);
                 bad("@D_dump", sout.str());
             }
             std::cout << "ok | tw=" << ref->tab_width() << " n=" << n;
@@ -236,4 +304,15 @@ num SplitListTester::get_setting(string ind) const
         exit(1);
     }
     return it->second;
+}
+
+void SplitListTester::dump_all(std::stringstream &ss)
+{
+    auto dump_obj = obj->D_dump();
+    auto dump_ref = ref->D_dump();
+    ss << "  n=" << ref->size() << " tab_width=" << ref->tab_width() << std::endl;
+    ss << "  obj: "; for (auto x : dump_obj) ss << p_ch(x.first); ss << std::endl;
+    ss << "  ref: "; for (auto x : dump_ref) ss << p_ch(x.first); ss << std::endl;
+    ss << "  obj_w: "; for (auto x : dump_obj) ss << x.second << " "; ss << std::endl;
+    ss << "  ref_w: "; for (auto x : dump_ref) ss << x.second << " "; ss << std::endl;
 }

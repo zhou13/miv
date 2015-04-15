@@ -12,7 +12,7 @@
     \sa XArray
 */
 
-static const int BLOCK_SIZE = 5;
+static const int BLOCK_SIZE = 50;
 
 class SplitListBlock {
 public:
@@ -187,9 +187,18 @@ void SplitList::insert(num pos, const std::wstring &value)
 void SplitList::erase(num begin, num end)
 {
     SplitListBlock *tail, *middle;
+    //if (D_check_w(m_head, 0)) { std::cout << "erase#0: good m_head" << std::endl; }
+    //for (auto cur = m_head; cur; cur = cur->next) std::cout << cur->size << " ";
+    //std::cout << std::endl;
+    //std::cout << "end=" << end << std::endl;
     m_head = _split(m_head, end, tail);
+    //if (!D_check_w(m_head, 0)) { std::cout << "erase#1: bad m_head" << std::endl; }
+    //if (!D_check_w(tail, 0)) { std::cout << "erase#1: bad tail" << std::endl; }
     m_head = _split(m_head, begin, middle);
+    //if (!D_check_w(m_head, 0)) { std::cout << "erase#2: bad m_head" << std::endl; }
+    //if (!D_check_w(middle, 0)) { std::cout << "erase#2: bad middle" << std::endl; }
     m_head = _concat(m_head, tail, 0);
+    //if (!D_check_w(m_head, 0)) { std::cout << "erase#3: bad m_head" << std::endl; }
     delete middle;
 
     m_size -= end - begin;
@@ -231,8 +240,28 @@ string SplitList::D_test() const
             return string("wrong tab count");
         if (cw != cur->cw)
             return string("wrong cw (width after last newline)");
+
+        if (cur->next != nullptr && cur->size + cur->next->size <= BLOCK_SIZE)
+            return string("warning (can be merged but haven't)");
     }
     return string("");
+}
+
+bool SplitList::D_check_w(SplitListBlock *cur, num cw) const
+{
+    if (cur == nullptr)
+        return true;
+    for (num i = 0; i < cur->size; ++i) {
+        num w = char_width(cur->a[i]);
+        if (cur->a[i] == '\t')
+            w = m_tab_width - cw;
+        if (w != (num)cur->w[i])
+            return false;
+        cw = (cw + w) % m_tab_width;
+        if (cur->a[i] == '\n')
+            cw = 0;
+    }
+    return D_check_w(cur->next, cw);
 }
 
 /*!
@@ -257,9 +286,9 @@ num SplitList::width(num begin, num end) const
             continue;
         }
         num s = max(begin, le) - le;
-        num t = min(end, le) - le;
+        num t = min(end, ri) - le;
         if (s < t) {
-            ans += std::accumulate(cur->w + s, cur->w + t, 0);
+            ans += (num)std::accumulate(cur->w + s, cur->w + t, (num)0);
         }
     }
     return ans;
@@ -270,9 +299,9 @@ num SplitList::width(num begin, num end) const
 */
 num SplitList::find_visual_pos(num i, num w) const
 {
-    num begin = 0, end;
+    num begin = 0, end = 0;
     for (auto cur = m_head; cur != nullptr; cur = cur->next) {
-        end = begin + cur->size;
+        begin = end, end += cur->size;
         if (end <= i)
             continue;
         num cur_width = 0;
@@ -283,6 +312,7 @@ num SplitList::find_visual_pos(num i, num w) const
             num x = i - begin, y = cur->size;
             cur_width = (num)std::accumulate(cur->w + x, cur->w + y, (num)0);
         }
+        //std::cout << "  ->find_visual_pos: begin=" << begin << " end=" << end << " cur_w=" << cur_width << std::endl;
         if (w < cur_width) {
             // inside this block
             for (num j = i;; ++j) {
@@ -294,6 +324,7 @@ num SplitList::find_visual_pos(num i, num w) const
             }
         }
         w -= cur_width;
+        i = end;
     }
     return size();
 }
@@ -380,6 +411,7 @@ SplitListBlock *SplitList::_split(SplitListBlock *cur, num pos, SplitListBlock *
 {
     if (pos == 0) {
         tmp = cur;
+        tmp = _resize_single_tab(tmp, 0);
         return nullptr;
     }
     if (pos < cur->size) {
@@ -390,7 +422,7 @@ SplitListBlock *SplitList::_split(SplitListBlock *cur, num pos, SplitListBlock *
         std::copy(cur->a + pos, cur->a + cur->size, tmp->a);
         std::copy(cur->w + pos, cur->w + cur->size, tmp->w);
         tmp->update();
-        _try_merge(tmp);
+        tmp = _try_merge(tmp);
 
         tmp = _resize_single_tab(tmp, 0);
 
@@ -400,6 +432,7 @@ SplitListBlock *SplitList::_split(SplitListBlock *cur, num pos, SplitListBlock *
         return cur;
     }
     cur->next = _split(cur->next, pos - cur->size, tmp);
+    cur = _try_merge(cur);
     return cur;
 }
 
