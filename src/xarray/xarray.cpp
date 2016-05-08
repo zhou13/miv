@@ -165,6 +165,22 @@ XArray::~XArray()
 }
 
 /*!
+    Check if this Xarray is empty.
+*/
+bool XArray::empty()
+{
+    return size() == 0;
+}
+
+/*!
+    Set this Xarray to empty.
+*/
+void XArray::clear()
+{
+    assign(wstring());
+}
+
+/*!
     Set the width of tabs. By default the width is 4.
 
     Time complexity: \f$O(size)\f$.

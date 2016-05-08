@@ -23,7 +23,7 @@ Miv::~Miv()
 void Miv::init()
 {
     unique_ptr<XArray> array = make_unique<XArray>();
-    unique_ptr<File> file = make_unique<File>(this, array.get(), "");
+    unique_ptr<File> file = make_unique<File>(this, array.get(), "miv.txt");
     file->read();
     unique_ptr<Frame> frame = make_unique<Frame>(this, array.get());
     m_currframe = frame.get();

@@ -27,7 +27,6 @@ void Frame::set_mode(Mode mode)
 void Frame::set_cursor(Point point)
 {
     DIE("not implemented")
-    // m_cursor = point;
     adjust_cursor();
 }
 

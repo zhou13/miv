@@ -53,6 +53,7 @@ set(
     src/xarray/xarray.cpp
     src/xarray/splitlist.cpp
     src/config/config.cpp
+    src/config/iconfig.hpp
 )
 
 add_subdirectory(src/utils/libtermkey)

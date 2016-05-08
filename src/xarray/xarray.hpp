@@ -27,6 +27,8 @@ public:
 
     XArray();
 	~XArray();
+    bool empty();
+    void clear();
     void assign(const wstring &value);
     void set_tab_width(num width);
 

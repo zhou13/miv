@@ -80,11 +80,5 @@ void DeleteCurrentLineAction::perform()
 
 void DeleteToLineEndAction::perform()
 {
-    auto frame = m_miv->frame();
-    XArray *array = frame->array();
-    num line_number = frame->page().origin.x + frame->cursor().x;
-    XArray::iterator first = array->line_begin(line_number);
-    XArray::iterator last = array->line_end(line_number);
-    array->erase(first, last);
-    frame->adjust_cursor();
+
 }

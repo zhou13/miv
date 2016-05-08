@@ -2,6 +2,7 @@
 
 #include "utils/utils.hpp"
 #include "miv/input.hpp"
+#include "config/iconfig.hpp"
 
 class Frame;
 class XArray;
@@ -9,7 +10,7 @@ class File;
 class Controller;
 class UI;
 
-class Miv {
+class Miv : public IConfig {
 public:
     Miv(UI *ui);
 	~Miv();
@@ -27,6 +28,10 @@ public:
     Frame *frame(num id = -1);
     num frame_index(const Frame *frame) const;
 
+    shared_ptr<Config> config() {
+        return m_config;
+    }
+
 private:
     UI *m_ui;
     Frame *m_currframe;
@@ -34,4 +39,5 @@ private:
     vector<unique_ptr<XArray>> m_arrays;
     vector<unique_ptr<File>> m_files;
     unique_ptr<Controller> m_controller;
+    shared_ptr<Config> m_config;
 };

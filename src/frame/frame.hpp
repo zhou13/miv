@@ -6,6 +6,8 @@
 
 class Miv;
 class XArray;
+class Config;
+
 class Frame {
 public:
     Frame(Miv *miv, XArray *array);
@@ -38,7 +40,9 @@ private:
     Miv *m_miv;
     XArray* m_array;
     Mode m_mode;
+    shared_ptr<Config> m_config;
 
     Vector m_cursor;
     Rect m_page;
+
 };

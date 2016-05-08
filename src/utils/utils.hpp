@@ -114,7 +114,9 @@ struct Rect {
 #include "utils/logger.hpp"
 
 #ifndef __GNUC__
-#define DIE(arg) { DEFINE_SCOPE_LOGGER; mlog->error(arg); exit(1);}
+#  define DIE(arg) { DEFINE_SCOPE_LOGGER; mlog->error(arg); exit(1);}
+#  define DIE_IF(cond, args) { DEFINE_SCOPE_LOGGER; mlog->error(args); exit(1);}
 #else
-#define DIE(args...) { DEFINE_SCOPE_LOGGER; mlog->error(args); exit(1);}
+#  define DIE(args...) { DEFINE_SCOPE_LOGGER; mlog->error(args); exit(1);}
+#  define DIE_IF(cond, args...) if (cond) { DEFINE_SCOPE_LOGGER; mlog->error(args); exit(1);}
 #endif
